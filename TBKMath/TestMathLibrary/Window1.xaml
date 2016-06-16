@@ -1,0 +1,15 @@
+﻿<Window x:Class="TestMathLibrary.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Window1" Height="300" Width="302">
+    <Grid>
+        <Button Height="23" HorizontalAlignment="Right" Name="dismissButton" VerticalAlignment="Bottom" Width="75" Click="dismissButton_Click">dismiss</Button>
+        <Button Name="testAmoebaButton" Height="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="75" Click="testAmoebaButton_Click" Margin="0,0,0,29">amoeba</Button>
+        <TextBox Height="88" Name="MessageBox" VerticalAlignment="Top" />
+        <Button Height="23" HorizontalAlignment="Right" Margin="0,0,0,58" Name="bisectButton" VerticalAlignment="Bottom" Width="75" Click="bisectButton_Click">bisect</Button>
+        <Button Content="MCMC" Height="23" HorizontalAlignment="Left" Margin="12,180,0,0" Name="mcmcButton" VerticalAlignment="Top" Width="75" Click="mcmcButton_Click" />
+        <Button Content="Semipartition" Height="23" HorizontalAlignment="Left" Margin="12,209,0,0" Name="semipartitionButton" VerticalAlignment="Top" Width="75" Click="semipartitionButton_Click" />
+        <Button Content="cluster" Height="23" HorizontalAlignment="Left" Margin="12,151,0,0" Name="clusterButton" VerticalAlignment="Top" Width="75" Click="clusterButton_Click" />
+        <Button Content="network" Height="23" HorizontalAlignment="Left" Margin="93,151,0,0" Name="networkButton" VerticalAlignment="Top" Width="75" Click="networkButton_Click" />
+    </Grid>
+</Window>
