@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBKMath", "TBKMath\TBKMath.csproj", "{067FCE5A-F03B-4F60-96F7-9D771F1158EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMathLibrary", "TestMathLibrary\TestMathLibrary.csproj", "{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfs.bumc.bu.edu:8080/tfs/bu-micro-msi
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = TBKMath\\TBKMath.csproj
+		SccProjectName1 = TBKMath
+		SccLocalPath1 = TBKMath
+		SccProjectUniqueName2 = TestMathLibrary\\TestMathLibrary.csproj
+		SccProjectName2 = TestMathLibrary
+		SccLocalPath2 = TestMathLibrary
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Debug|x64.ActiveCfg = Debug|x64
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Debug|x64.Build.0 = Debug|x64
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Release|x64.ActiveCfg = Release|x64
+		{067FCE5A-F03B-4F60-96F7-9D771F1158EB}.Release|x64.Build.0 = Release|x64
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Debug|x64.ActiveCfg = Debug|x64
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Debug|x64.Build.0 = Debug|x64
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC027E4D-7EE1-4C68-A7F7-ADA15DBE1ED5}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		VisualSVNWorkingCopyRoot = 
+	EndGlobalSection
+EndGlobal
