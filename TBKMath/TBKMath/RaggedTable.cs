@@ -18,12 +18,37 @@ namespace TBKMath
 
         private static string[] GetStringBuffer(byte[] byteBuffer)
         {
-            return System.Text.ASCIIEncoding.ASCII.GetString(byteBuffer).Split('\n');
+            return Encoding.ASCII.GetString(byteBuffer).Split('\n');
         }
 
-        public void Read(byte[] buffer)
+        public void FromString(string tableString)
         {
+            StringReader reader = new StringReader(tableString);
+            read(reader);
+        }
 
+        private void read(TextReader reader)
+        {
+            List<string> temp = new List<string>();
+            string line = reader.ReadLine();
+            while (line != null)
+            {
+                temp.Add(line.TrimEnd());
+                line = reader.ReadLine();
+            }
+            reader.Close();
+
+            this.nRows = temp.Count;
+            this.data = new List<string>[nRows];
+            for (int i = 0; i < nRows; i++)
+            {
+                string[] buffer = temp[i].Split('\t');
+                data[i] = new List<string>();
+                for (int j = 0; j < buffer.Length; j++)
+                {
+                    data[i].Add(buffer[j]);
+                }
+            }
         }
 
         public void Read(string FileName)
@@ -39,26 +64,7 @@ namespace TBKMath
                 throw new FileLoadException("The file could not be opened.");
             }
 
-            List<string> temp = new List<string>();
-            string line = reader.ReadLine();
-            while (line != null)
-            {
-                temp.Add(line.TrimEnd());
-                line = reader.ReadLine();
-            }
-            reader.Close();
-
-            this.nRows = temp.Count;
-            this.data = new List<string>[nRows];
-            for (int i = 0; i < nRows; i++)
-            {
-                string[] buffer =  temp[i].Split('\t');
-                data[i] = new List<string>();
-                for (int j = 0; j < buffer.Length; j++)
-                {
-                    data[i].Add(buffer[j]);
-                }
-            }
+            read(reader);
         }
 
         private List<string>[] data;
