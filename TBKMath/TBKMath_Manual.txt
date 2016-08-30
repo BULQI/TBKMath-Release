@@ -1,0 +1,127 @@
+﻿TBK Math Library
+
+
+
+Files
+
+
+
+	Amoeba
+
+	
+
+	Inherits from EstimationProcess
+
+	
+
+	public members
+
+		double ToleranceAchieved
+
+		double ToleranceRequested
+
+		double DefaultEdgeSize
+
+	
+
+	Use:
+
+		declare class and initialize
+
+			Amoeba am = new Amoeba()
+
+			
+
+		set number of iterations:
+
+			am.maxNumIterations = (integer)
+
+			
+
+		set desired tolerance:
+
+			am.ToleranceRequested = (double)
+
+			
+
+		assign objective function:
+
+			am.Function = ( static double function(List<double> parameters) )
+
+			
+
+			am.Function is itself a double delegate
+
+			
+
+		initialize parameter value:
+
+			am.Point = (List<double>)
+
+				the length of the list must match the length of the parameter list
+
+				in function assigned to am.Function
+
+				
+
+		initialize the scale parameters
+
+			am.Scale = (List<double>) length = number of parameters
+
+			
+
+		launch minimization:
+
+			am.Start()
+
+			
+
+			at conclusion, the parameter vector at which the objective function is minimized
+
+			is held in am.Point
+
+			
+
+		Convergence criterion:
+
+         
+
+              ToleranceAchieved = | f_Min - f_Max | /  ( | f_Min | + | f_Max | ) / 2
+
+              ToleranceAchieved < ToleranceRequested
+
+
+
+	Annealer
+
+
+
+	Bisector
+
+
+
+	CodeCogsSharp
+
+
+
+	EstimationProcess
+
+
+
+	FileIDs
+
+
+
+	MCMC
+
+
+
+	Quadrature
+
+
+
+	Table
+
+
+
+	Vector
