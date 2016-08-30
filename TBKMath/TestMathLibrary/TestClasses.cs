@@ -49,9 +49,7 @@ namespace TestMathLibrary
     {
         public TestBisector()
         {
-            double tol = 1E-6;
-            bi = new Bisector(tol);
-            bi.func = new Bisector.FunctionDelegate(TestFunctions.xMinusLogXMinusTwo);
+            bi = new Bisector(new Bisector.FunctionDelegate(TestFunctions.xMinusLogXMinusTwo));
         }
 
         public void runTest()
