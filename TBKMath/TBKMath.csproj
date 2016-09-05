@@ -146,6 +146,7 @@
     <Compile Include="RaggedTable.cs" />
     <Compile Include="Smoother.cs" />
     <Compile Include="Sorters.cs" />
+    <Compile Include="StringTable.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="UseriInterfaceTools.cs" />
     <Compile Include="Utilities.cs" />
