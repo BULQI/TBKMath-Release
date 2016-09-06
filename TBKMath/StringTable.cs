@@ -22,8 +22,8 @@ namespace TBKMath
             get { return nColumns; }
         }
 
-        private string[] columnNames;
-        public string[] ColumnNames
+        private List<string> columnNames;
+        public List<string> ColumnNames
         {
             get
             {
@@ -38,11 +38,11 @@ namespace TBKMath
             this.nRows = nRows;
             this.nColumns = nColumns;
             data = new string[nRows, nColumns];
-            columnNames = new string[nColumns];
+            columnNames = new List<string>();
             columnIndex = new Dictionary<string, int>();
             for (int i= 0; i< nColumns; i++)
             {
-                columnNames[i] = "Column" + i;
+                columnNames.Add("Column" + i);
                 columnIndex.Add(columnNames[i], i);
             }
         }
@@ -81,7 +81,8 @@ namespace TBKMath
             int nRows = temp.Count - 1;
             StringTable table = new StringTable(nRows, nCols);
 
-            table.columnNames = temp[0].Split(delimiter);
+            table.columnNames = temp[0].Split(delimiter).ToList();
+            table.columnIndex.Clear();
             for (int iCol = 0; iCol < nCols; iCol++)
             {
                 table.columnIndex.Add(table.columnNames[iCol], iCol);
@@ -227,6 +228,11 @@ namespace TBKMath
             return column;
         }
 
+        public bool ContainsColumn(string columnName)
+        {
+            return columnNames.Contains(columnName);
+        }
+
         public override string ToString()
         {
             if (NRows == 0 | nColumns == 0)
@@ -253,11 +259,19 @@ namespace TBKMath
             return sb.ToString();
         }
 
-        public static StringTable MergeTableByKeyColumns(StringTable t1, StringTable t2, int mergeKey1 = 0, int mergeKey2 = 0)
+        public static StringTable MergeTableByKeyColumns(StringTable t1, StringTable t2, string mergeColumn1, string mergeColumn2)
         {
             // collect unique keys
+            if (!t1.ContainsColumn(mergeColumn1) | !t2.ContainsColumn(mergeColumn2))
+            {
+                throw new Exception("The tables do not contain the specified column keys.");
+            }
+
+            int mergeKey1 = t1.columnIndex[mergeColumn1];
+            int mergeKey2 = t2.columnIndex[mergeColumn2];
+
+            List<int> keyReference = new List<int>();
             Dictionary<string, int[]> rowKeys = new Dictionary<string, int[]>();
-            int count = 0;
             for (int iRow = 0; iRow < t1.NRows; iRow++)
             {
                 if (rowKeys.ContainsKey(t1.data[iRow, mergeKey1]))
@@ -265,8 +279,8 @@ namespace TBKMath
                     throw new Exception("Table 1 contains duplicate merge key entries.");
                 }
 
-                rowKeys.Add(t1.data[iRow, mergeKey1], new int[] { count, iRow, -1 });
-                count++;
+                rowKeys.Add(t1.data[iRow, mergeKey1], new int[] { iRow, iRow, -1 });
+                keyReference.Add(1);
             }
 
             for (int iRow = 0; iRow < t2.NRows; iRow++)
@@ -284,22 +298,30 @@ namespace TBKMath
                 }
                 else
                 {
-                    rowKeys.Add(t2.data[iRow, mergeKey2], new int[] { count, -1, iRow });
-                    count++;
+                    rowKeys.Add(t2.data[iRow, mergeKey2], new int[] { t1.NRows + iRow, -1, iRow });
+                    keyReference.Add(2);
                 }
             }
 
             int nRows = rowKeys.Count;
             int nColumns = t1.nColumns + t2.nColumns - 1;
             StringTable t = new StringTable(nRows, nColumns);
+            t.columnIndex.Clear();
+
             Dictionary<string, int[]> originalColumnNumber = new Dictionary<string, int[]>();
+
+            // put the merge key into column 1
+            t.columnIndex.Add(mergeColumn1, 0);
             foreach (KeyValuePair<string, int> kvp in t1.columnIndex)
             {
+                if (kvp.Key == mergeColumn1)
+                    continue;
+
                 t.columnIndex.Add(kvp.Key, kvp.Value);
                 originalColumnNumber.Add(kvp.Key, new int[] { 1, kvp.Value });
             }
 
-            count = t1.nColumns;
+            int count = t1.nColumns;
             foreach (KeyValuePair<string, int> kvp in t2.columnIndex)
             {
                 if (kvp.Value == mergeKey2)
@@ -314,25 +336,56 @@ namespace TBKMath
                 originalColumnNumber.Add(newName, new int[] { 2, kvp.Value });
                 count++;
             }
-            t.columnNames = t.columnIndex.Keys.ToArray();
+            t.columnNames = t.columnIndex.Keys.ToList();
+
+            // fill out merged key column
+            for (int iRow = 0; iRow < t.nRows; iRow++)
+            {
+                switch (keyReference[iRow])
+                {
+                    case 1:
+                        t.data[iRow, 0] = t1.data[iRow, mergeKey1];
+                        break;
+                    case 2:
+                        t.data[iRow, 0] = t2.data[iRow - t1.NRows, mergeKey2];
+                        break;
+                } 
+            }
+
             foreach (KeyValuePair<string, int> column in t.columnIndex)
             {
+                if (column.Key == mergeColumn1)
+                    continue;
+
                 foreach (KeyValuePair<string, int[]> kvp in rowKeys)
                 {
-                    if (kvp.Value[1] > 0) // this row is present in table 1
+                    if (originalColumnNumber[column.Key][0] == 1) // this column comes from table 1
                     {
-                        if (originalColumnNumber[column.Key][0] == 1)
+                        if (kvp.Value[1] > -1) // this row is present in table 1
                         {
+                            // rowKeys[0] = row index in new table
+                            // rowKeys[1] = row index in table 1
+                            // rowKeyrs[2] = row index in table 2
                             t.data[kvp.Value[0], column.Value] = t1.data[kvp.Value[1], originalColumnNumber[column.Key][1]];
                         }
-                        else // it's in table 2
+                        else
                         {
-                            t.data[kvp.Value[0], column.Value] = t2.data[kvp.Value[1], originalColumnNumber[column.Key][1]];
+                            t.data[kvp.Value[0], column.Value] = "NULL";
                         }
                     }
-                    else
+                    else // this column comes from table two
                     {
-                        t.data[kvp.Value[0], column.Value] = "NULL";
+                        if (kvp.Value[2] > -1) // this row is present in table 2
+                        {
+                            // rowKeys[0] = row index in new table
+                            // rowKeys[1] = row index in table 1
+                            // rowKeyrs[2] = row index in table 2
+                            t.data[kvp.Value[0], column.Value] = t2.data[kvp.Value[2], originalColumnNumber[column.Key][1]];
+                        }
+                        else
+                        {
+                            t.data[kvp.Value[0], column.Value] = "NULL";
+                        }
                     }
                 }
             }

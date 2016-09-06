@@ -11,24 +11,15 @@ namespace TBKMath
     {
         public RaggedTable() { }
 
-        public RaggedTable(string FileName)
-        {
-            this.Read(FileName);
-        }
-
         private static string[] GetStringBuffer(byte[] byteBuffer)
         {
             return Encoding.ASCII.GetString(byteBuffer).Split('\n');
         }
 
-        public void FromString(string tableString)
+        public static RaggedTable FromString(string tableString)
         {
             StringReader reader = new StringReader(tableString);
-            read(reader);
-        }
 
-        private void read(TextReader reader)
-        {
             List<string> temp = new List<string>();
             string line = reader.ReadLine();
             while (line != null)
@@ -38,20 +29,22 @@ namespace TBKMath
             }
             reader.Close();
 
-            this.nRows = temp.Count;
-            this.data = new List<string>[nRows];
-            for (int i = 0; i < nRows; i++)
+            RaggedTable table = new RaggedTable();
+            table.nRows = temp.Count;
+            table.data = new List<string>[table.nRows];
+            for (int i = 0; i < table.nRows; i++)
             {
                 string[] buffer = temp[i].Split('\t');
-                data[i] = new List<string>();
+                table.data[i] = new List<string>();
                 for (int j = 0; j < buffer.Length; j++)
                 {
-                    data[i].Add(buffer[j]);
+                    table.data[i].Add(buffer[j]);
                 }
             }
+            return table;
         }
 
-        public void Read(string FileName)
+        public static RaggedTable ReadFromFile(string FileName)
         {
             FileInfo src = new FileInfo(FileName);
             TextReader reader = null;
@@ -63,8 +56,7 @@ namespace TBKMath
             {
                 throw new FileLoadException("The file could not be opened.");
             }
-
-            read(reader);
+            return FromString(reader.ToString());
         }
 
         private List<string>[] data;
