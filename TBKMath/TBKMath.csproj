@@ -129,11 +129,11 @@
     <Compile Include="Amoeba.cs" />
     <Compile Include="Annealer.cs" />
     <Compile Include="Bisector.cs" />
+    <Compile Include="Clusterer.cs" />
     <Compile Include="CodeCogsSharp.cs" />
     <Compile Include="EmpiricalClusterer.cs" />
     <Compile Include="EstimationProcess.cs" />
     <Compile Include="FileIDs.cs" />
-    <Compile Include="IntegerPair.cs" />
     <Compile Include="MCMC.cs" />
     <Compile Include="Munkres.cs" />
     <Compile Include="Network.cs" />
@@ -144,6 +144,7 @@
     <Compile Include="PseudoRandom.cs" />
     <Compile Include="Quadrature.cs" />
     <Compile Include="RaggedTable.cs" />
+    <Compile Include="ScoreManager.cs" />
     <Compile Include="Smoother.cs" />
     <Compile Include="Sorters.cs" />
     <Compile Include="StringTable.cs" />

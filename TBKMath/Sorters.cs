@@ -63,93 +63,6 @@ namespace TBKMath
         }
     }
 
-    public class ScoreManager<T>
-    {
-        public double MaxAllowableDifference;
-        public Dictionary<T, double> Scores;
-        public double MaxScore;
-        private T argMax;
-        public T ArgMax
-        {
-            get { return argMax; }
-        }
-
-        public ScoreManager(double maxDifference, double initialScore = double.MinValue)
-        {
-            MaxAllowableDifference = maxDifference;
-            MaxScore = initialScore;
-            Scores = new Dictionary<T, double>();
-        }
-
-        public string Serialized()
-        {
-            string output = string.Empty;
-            // sort 
-
-            DictionarySorter<T>.SortDictionary(Scores);
-
-            foreach (T t in Scores.Keys)
-            {
-                output += t.ToString() + "\t" + Scores[t].ToString();
-            }
-            return output;
-        }
-
-        public bool Process(T item, double score)
-        {
-            if (score < MaxScore - MaxAllowableDifference)
-                return false;
-
-            if (Scores.ContainsKey(item))
-            {
-                throw new Exception("Item already exists in scores.");
-            }
-
-            if (score > MaxScore)
-            {
-                MaxScore = score;
-                argMax = item;
-            }
-
-            Scores.Add(item, score);
-            return true;
-        }
-
-        public void Purge()
-        {
-            foreach (T entity in Scores.Keys.ToArray())
-            {
-                if (Scores[entity] < MaxScore - MaxAllowableDifference)
-                {
-                    Scores.Remove(entity);
-                }
-            }
-        }
-
-        public bool Remove(T item)
-        {
-            if (!Scores.ContainsKey(item))
-            {
-                return false;
-            }
-            bool needNewMax = Scores[item] == MaxScore;
-            Scores.Remove(item);
-            if (needNewMax)
-            {
-                MaxScore = double.MinValue;
-                foreach (KeyValuePair<T, double> kvp in Scores)
-                {
-                    if (kvp.Value > MaxScore)
-                    {
-                        MaxScore = kvp.Value;
-                        argMax = kvp.Key;
-                    }
-                }
-            }
-            return true;
-        }
-    }
-
     /// <summary>
     /// Provides a the means to sort dictionaries on their values.
     /// </summary>
@@ -308,9 +221,5 @@ namespace TBKMath
                 }
             }
         }
-
     }
-
-
-
 }
