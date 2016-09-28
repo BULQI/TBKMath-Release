@@ -8,18 +8,22 @@ namespace TBKMath
 {
     public class ScoreManager<T> : IEnumerable
     {
+        private bool useNames = false;
         private List<double> scores;
         private List<T> items;
         private List<bool> activities;
+        private List<string> names;
         public T TopItem;
         public double TopScore;
         public double Threshold = 4.605;
 
-        public ScoreManager()
+        public ScoreManager(bool useNames = false)
         {
+            this.useNames = useNames;
             scores = new List<double>();
             items = new List<T>();
             activities = new List<bool>();
+            names = new List<string>();
             TopScore = double.MinValue;
         }
 
@@ -34,6 +38,12 @@ namespace TBKMath
             items.Add(item);
             scores.Add(score);
             activities.Add(true);
+
+            if (useNames)
+            {
+                names.Add(item.ToString());
+            }
+
             if (score > TopScore)
             {
                 TopScore = score;
@@ -53,6 +63,12 @@ namespace TBKMath
             items.Add(so.Item);
             scores.Add(so.Score);
             activities.Add(true);
+
+            if (useNames)
+            {
+                names.Add(so.Item.ToString());
+            }
+
             if (so.Score > TopScore)
             {
                 TopScore = so.Score;
@@ -117,6 +133,8 @@ namespace TBKMath
             List<double> tmpScores = new List<double>(scores.Count);
             List<T> tmpItems = new List<T>(scores.Count);
             List<bool> tmpActivities = new List<bool>();
+            List<string> tmpNames = new List<string>();
+
             double thresholdScore = TopScore - Threshold;
 
             for (int i = 0; i < scores.Count; i++)
@@ -126,11 +144,39 @@ namespace TBKMath
                     tmpScores.Add(scores[i]);
                     tmpItems.Add(items[i]);
                     tmpActivities.Add(true);
+                    if (useNames)
+                        tmpNames.Add(items[i].ToString());
                 } 
             }
+
             scores = tmpScores;
             items = tmpItems;
             activities = tmpActivities;
+            names = tmpNames;
+        }
+
+        public bool Remove(T item)
+        {
+            int index = items.FindIndex(x => x.Equals(item));
+            if (index > -1)
+            {
+                items.RemoveAt(index);
+                activities.RemoveAt(index);
+                if (scores[index]  == TopScore)
+                {
+                    scores.RemoveAt(index);
+                    RecomputeTopScore();
+                }
+                else
+                {
+                    scores.RemoveAt(index);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Revalidate() 
@@ -197,9 +243,27 @@ namespace TBKMath
             }
         }
 
+        public bool ContainsItemNamed(string name)
+        {
+            return names.Contains(name);
+        }
+
+        public T ItemByName(string name)
+        {
+            int i = names.IndexOf(name);
+            if (i > -1)
+            {
+                return items[i];
+            }
+            else
+            {
+                throw new ArgumentException("No item with that name was found.");
+            }
+        }
+
         public IEnumerator GetEnumerator()
         {
-            return new ScoreManagerEnum<T>(items, activities);
+            return new ScoreManagerEnum<T>(items, activities, scores);
         }
 
     }
@@ -207,16 +271,18 @@ namespace TBKMath
     {
         private List<T> members;
         private List<bool> activities;
+        private List<double> scores;
         int position = -1;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="_members">Pass the members field of the PolynucCollection being enumerated.</param>
-        public ScoreManagerEnum(List<T> _members, List<bool> _activities)
+        public ScoreManagerEnum(List<T> _members, List<bool> _activities, List<double> _scores)
         {
             members = _members;
             activities = _activities;
+            scores = _scores; 
         }
 
         /// <summary>
@@ -252,13 +318,13 @@ namespace TBKMath
         /// <summary>
         /// Gets the current item.
         /// </summary>
-        public T Current
+        public ScoredObject<T> Current
         {
             get
             {
                 try
                 {
-                    return members[position];
+                    return new ScoredObject<T>() { Item = members[position], Score = scores[position] };
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -267,6 +333,4 @@ namespace TBKMath
             }
         }
     }
-
-
 }

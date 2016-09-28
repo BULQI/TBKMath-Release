@@ -104,6 +104,11 @@ namespace TBKMath
             TopScore = double.MinValue;
         }
 
+        public ScoreKeeper(ScoreManager<T> manager)
+        {
+            
+        }
+
         public void Add(T item, double score)
         {
             items.Add(item);

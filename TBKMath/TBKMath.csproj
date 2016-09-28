@@ -129,7 +129,6 @@
     <Compile Include="Amoeba.cs" />
     <Compile Include="Annealer.cs" />
     <Compile Include="Bisector.cs" />
-    <Compile Include="Clusterer.cs" />
     <Compile Include="CodeCogsSharp.cs" />
     <Compile Include="EmpiricalClusterer.cs" />
     <Compile Include="EstimationProcess.cs" />
