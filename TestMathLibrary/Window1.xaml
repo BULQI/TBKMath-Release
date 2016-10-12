@@ -11,5 +11,7 @@
         <Button Content="Semipartition" Height="23" HorizontalAlignment="Left" Margin="12,209,0,0" Name="semipartitionButton" VerticalAlignment="Top" Width="75" Click="semipartitionButton_Click" />
         <Button Content="cluster" Height="23" HorizontalAlignment="Left" Margin="12,151,0,0" Name="clusterButton" VerticalAlignment="Top" Width="75" Click="clusterButton_Click" />
         <Button Content="network" Height="23" HorizontalAlignment="Left" Margin="93,151,0,0" Name="networkButton" VerticalAlignment="Top" Width="75" Click="networkButton_Click" />
+        <Button x:Name="button" Content="score manag" HorizontalAlignment="Left" Margin="12,108,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
+        <TextBox x:Name="smSizeBox" HorizontalAlignment="Left" Height="23" Margin="93,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>

@@ -11,12 +11,6 @@ using System.Collections.Generic;
 
 namespace TBKMath
 {
-    public struct ScoredObject<T>
-    {
-        public T Item;
-        public double Score;
-    }
-
     //public class PriorityQueue<T> where T : IComparable<T>
     //{
     //    private List<T> data;

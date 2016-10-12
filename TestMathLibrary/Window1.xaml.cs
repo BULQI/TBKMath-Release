@@ -263,5 +263,13 @@ namespace TestMathLibrary
 
             List<Network<int>> connectedComponentsList = Network<int>.GetConnectedComponents(network);
         }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            int size = smSizeBox. AsInt();
+            double[] times = TestScoreManager.Test(size);
+            MessageBox.Text += "Purge time = " + times[0] + "\n";
+            MessageBox.Text += "Reval time = " + times[1] + "\n";
+        }
     }
 }

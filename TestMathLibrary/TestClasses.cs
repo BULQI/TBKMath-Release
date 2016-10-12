@@ -113,4 +113,41 @@ namespace TestMathLibrary
         }
         
     }
+
+    static class TestScoreManager
+    {
+        public static double[] Test(int totalSize)
+        {
+            ScoreManager2<int> manager = new ScoreManager2<int>();
+            Random random = new Random();
+            manager.Threshold = 10;
+            for (int i = 0; i < totalSize; i++)
+            {
+                manager.Add(i, random.NextDouble());
+            }
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            manager.Threshold = 0.5;
+            manager.Purge();
+            timer.Stop();
+            double purgeTime = timer.ElapsedMilliseconds;
+
+            manager = new ScoreManager2<int>();
+            manager.Threshold = 10;
+            for (int i = 0; i < totalSize; i++)
+            {
+                manager.Add(i, random.NextDouble());
+            }
+            timer.Reset();
+            timer.Start();
+            manager.Threshold = 0.5;
+            manager.Revalidate();
+            timer.Stop();
+            double revalTime = timer.ElapsedMilliseconds;
+
+            return new double[] { purgeTime, revalTime };
+        }
+
+
+    }
 }
