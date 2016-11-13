@@ -213,6 +213,20 @@ namespace TBKMath
             }
             return copy;
         }
+
+        public static double LogStar(double x)
+        {
+            double y = Math.Log(x);
+            if (y <= 1)
+            {
+                return y;
+            }
+            else
+            {
+                return y + LogStar(y);
+            }
+        }
+
     }
 
     public static class Averager

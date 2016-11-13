@@ -271,5 +271,12 @@ namespace TestMathLibrary
             MessageBox.Text += "Purge time = " + times[0] + "\n";
             MessageBox.Text += "Reval time = " + times[1] + "\n";
         }
+
+        private void logStarClick(object sender, RoutedEventArgs e)
+        {
+            double y = yBox.AsDouble(1);
+            double logstary = Utilities.LogStar(y);
+            MessageBox.Text += "Log*(" + y + ") = " + logstary + "\n";
+        }
     }
 }
