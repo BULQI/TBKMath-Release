@@ -327,7 +327,7 @@ namespace TBKMath
         private List<string> names;
         public T TopItem;
         public double TopScore;
-        public double Threshold = 4.605;
+        public double Threshold = double.MaxValue; //Tom's Default = 4.605
 
         public ScoreManager2(bool useNames = false)
         {
