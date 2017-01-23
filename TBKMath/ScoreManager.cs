@@ -50,7 +50,6 @@ namespace TBKMath
         {
             return so1.CompareTo(so2) <= 0;
         }
-
     }
 
     public class ScoreManager<T> : IEnumerable
@@ -327,7 +326,7 @@ namespace TBKMath
         private List<string> names;
         public T TopItem;
         public double TopScore;
-        public double Threshold = double.MaxValue; //Tom's Default = 4.605
+        public double Threshold = 4.605;
 
         public ScoreManager2(bool useNames = false)
         {
@@ -416,6 +415,7 @@ namespace TBKMath
                 scoredObjects[i].Score /= sum;
             }
             TopScore = 1.0 / sum;
+            isNormalized = true;
         }
 
         public void Sort()
