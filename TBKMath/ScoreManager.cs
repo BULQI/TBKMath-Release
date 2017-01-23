@@ -327,6 +327,11 @@ namespace TBKMath
         public T TopItem;
         public double TopScore;
         public double Threshold = 4.605;
+        private bool isNormalized = false;
+        public bool IsNormalized
+        {
+            get { return isNormalized; }
+        }
 
         public ScoreManager2(bool useNames = false)
         {
