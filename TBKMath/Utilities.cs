@@ -219,10 +219,12 @@ namespace TBKMath
             double y = Math.Log(x);
             if (y <= 1)
             {
+                // if y < 1, the next term will be negative, so unwind the recursion here
                 return y;
             }
             else
             {
+                // if y > 1, the next term will be positive, so keep going
                 return y + LogStar(y);
             }
         }
