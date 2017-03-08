@@ -27,14 +27,14 @@ namespace TBKMath
 
             foreach (T t in Scores.Keys)
             {
-                output += t.ToString() + "\t" + Scores[t].ToString();
+                output += t.ToString() + "\t" + Scores[t].ToString() + "\n";
             }
             return output;
         }
 
         public bool Process(T item, double score)
         {
-            if (score < WorstScore & Scores.Count > NKeep)
+            if (score < WorstScore & Scores.Count >= NKeep)
                 return false;
 
             if (Scores.ContainsKey(item))
