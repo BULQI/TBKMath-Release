@@ -34,32 +34,46 @@ namespace TBKMath
 
         public bool Process(T item, double score)
         {
-            if (score < WorstScore & Scores.Count >= NKeep)
+            if (score < WorstScore && Scores.Count >= NKeep)
+            {
                 return false;
+            }
 
-            if (Scores.ContainsKey(item))
+            else if (Scores.ContainsKey(item))
             {
                 throw new Exception("Item already exists in scores.");
             }
-
-            Scores.Add(item, score);
-            if (Scores.Count > NKeep)
+            else
             {
-                Scores.Remove(worstResult);
-            }
-
-            // find new worst result
-            WorstScore = double.MaxValue;
-            foreach (KeyValuePair<T, double> kvp in Scores)
-            {
-                if (kvp.Value <= WorstScore)
+                Scores.Add(item, score);
+                if (Scores.Count > NKeep)
                 {
-                    WorstScore = kvp.Value;
-                    worstResult = kvp.Key;
-                }
-            }
+                    WorstScore = double.MaxValue;
+                    foreach (KeyValuePair<T, double> kvp in Scores)
+                    {
+                        if (kvp.Value <= WorstScore)
+                        {
+                            WorstScore = kvp.Value;
+                            worstResult = kvp.Key;
+                        }
+                    }
+                    Scores.Remove(worstResult);
 
-            return true;
+                }
+                return true;
+            }
+            // find new worst result
+            //WorstScore = double.MaxValue;
+            //foreach (KeyValuePair<T, double> kvp in Scores)
+            //{
+            //    if (kvp.Value <= WorstScore)
+            //    {
+            //        WorstScore = kvp.Value;
+            //        worstResult = kvp.Key;
+            //    }
+            //}
+
+            
         }
     }
 
