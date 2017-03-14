@@ -42,6 +42,13 @@ namespace TBKMath
             step = 1;
         }
 
+        /// <summary>
+        ///  Runs the Pilgrim version of the Munkres algorithm solving the assignment problem.
+        /// </summary>
+        /// <returns>The first item in the tuple is the value of the optimal assignment. The second 
+        /// item is the assignment vector. The indices of the assignment vector are the row indices 
+        /// of the overlap matrix; the values are the indices of the columns in the overlap matrix assigned
+        /// to the row index.</returns>
         public Tuple<int,int[]> Run()
         {
             bool done = false;
@@ -413,6 +420,10 @@ namespace TBKMath
             step = 4;
         }
 
+        /// <summary>
+        /// Gets the column index in the optimal assignment for each row index
+        /// </summary>
+        /// <returns>The entries in the return vector are the column indices where the row indices are the indices of the return vector.</returns>
         private int[] getAssignments()
         {
             int[] assignments = new int[nrow];
@@ -423,6 +434,11 @@ namespace TBKMath
             return assignments;
         }
 
+        /// <summary>
+        /// Computes the value of the assignment.
+        /// </summary>
+        /// <param name="assignments">The assignment array giving the column index for each row index.</param>
+        /// <returns>The value of the assignment on the original Matrix.</returns>
         private int GetValue(int[] assignments)
         {
             int value = 0;
