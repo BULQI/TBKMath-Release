@@ -143,6 +143,7 @@
     <Compile Include="PseudoRandom.cs" />
     <Compile Include="Quadrature.cs" />
     <Compile Include="RaggedTable.cs" />
+    <Compile Include="RelayCommand.cs" />
     <Compile Include="ScoreManager.cs" />
     <Compile Include="Smoother.cs" />
     <Compile Include="Sorters.cs" />
