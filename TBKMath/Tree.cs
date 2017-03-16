@@ -451,24 +451,6 @@ namespace TBKMath
             return;
         }
 
-        //public static void Decorate(Tree<Polymer<T>> t, PolymerCollection<T> pc)
-        //{
-        //    foreach (Tree<Polymer<T>> child in t.Children)
-        //    {
-        //        Decorate(child, pc);
-        //    }
-
-        //    foreach (Polymer<T> p in pc)
-        //    {
-        //        if (p.UID == t.Name)
-        //        {
-        //            t.Contents = p;
-        //            NBaubles++;
-        //        }
-        //    }
-        //    return;
-        //}
-
         /// <summary>
         /// Finds all of the internal nodes of a tree and returns them in a list.
         /// </summary>
