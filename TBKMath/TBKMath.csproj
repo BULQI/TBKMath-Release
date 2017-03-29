@@ -130,6 +130,7 @@
     <Compile Include="Annealer.cs" />
     <Compile Include="Bisector.cs" />
     <Compile Include="CodeCogsSharp.cs" />
+    <Compile Include="DataTable.cs" />
     <Compile Include="EmpiricalClusterer.cs" />
     <Compile Include="EstimationProcess.cs" />
     <Compile Include="FileIDs.cs" />
