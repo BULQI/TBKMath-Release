@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TBKMath
 {
-    class DataTable
+    public class DataTable
     {
         public List<DataRow> Rows;
         public Dictionary<string, DataColumn> Columns;
