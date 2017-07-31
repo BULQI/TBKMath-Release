@@ -175,6 +175,12 @@ namespace TBKMath
             ComputeMaxLevel(this);
         }
 
+        public void RemoveChild(Tree<T> child)
+        {
+            Children.Remove(child);
+            ComputeMaxLevel(this);
+        }
+
         private static int findMatchingRightParenthesis(string text, int startPosition)
         {
             if (text[startPosition] != '(')
