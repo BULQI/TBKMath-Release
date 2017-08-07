@@ -135,6 +135,7 @@
     <Compile Include="Amoeba.cs" />
     <Compile Include="Annealer.cs" />
     <Compile Include="Bisector.cs" />
+    <Compile Include="ByteBits.cs" />
     <Compile Include="CodeCogsSharp.cs" />
     <Compile Include="DataTable.cs" />
     <Compile Include="EmpiricalClusterer.cs" />
