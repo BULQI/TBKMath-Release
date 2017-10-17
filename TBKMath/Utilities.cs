@@ -231,6 +231,12 @@ namespace TBKMath
 
         public static double[] Cumulate(this double[] vector)
         {
+            if (vector == null)
+                return null;
+
+            if (vector.Length == 0)
+                return new double[0];
+
             double[] cumulated = new double[vector.Length];
             for (int i = 1; i < cumulated.Length; i++)
             {
@@ -241,6 +247,12 @@ namespace TBKMath
 
         public static int[] Cumulate(this int[] vector)
         {
+            if (vector == null)
+                return null;
+
+            if (vector.Length == 0)
+                return new int[0];
+
             int[] cumulated = new int[vector.Length];
             for (int i = 1; i < cumulated.Length; i++)
             {
