@@ -229,6 +229,26 @@ namespace TBKMath
             }
         }
 
+        public static double[] Cumulate(this double[] vector)
+        {
+            double[] cumulated = new double[vector.Length];
+            for (int i = 1; i < cumulated.Length; i++)
+            {
+                cumulated[i] = cumulated[i - 1] + vector[i];
+            }
+            return cumulated;
+        }
+
+        public static int[] Cumulate(this int[] vector)
+        {
+            int[] cumulated = new int[vector.Length];
+            for (int i = 1; i < cumulated.Length; i++)
+            {
+                cumulated[i] = cumulated[i - 1] + vector[i];
+            }
+            return cumulated;
+        }
+
     }
 
     public static class Averager
