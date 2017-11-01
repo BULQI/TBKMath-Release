@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMathLibrary", "TestMath
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBKMathTests", "TBKMathTests\TBKMathTests.csproj", "{B124B9BA-7D88-4B81-AB2B-0E372E268A2F}"
 EndProject
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "TBKMathHelp", "TBKMathHelp\TBKMathHelp.shfbproj", "{F8008436-A176-43D5-BA9C-A94BDCB523F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,14 @@ Global
 		{B124B9BA-7D88-4B81-AB2B-0E372E268A2F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B124B9BA-7D88-4B81-AB2B-0E372E268A2F}.Release|x64.ActiveCfg = Release|Any CPU
 		{B124B9BA-7D88-4B81-AB2B-0E372E268A2F}.Release|x64.Build.0 = Release|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Debug|x64.Build.0 = Debug|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{F8008436-A176-43D5-BA9C-A94BDCB523F4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,7 +58,7 @@ Global
 		VisualSVNWorkingCopyRoot = 
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://tfs.bumc.bu.edu:8080/tfs/bu-micro-msi
 		SccLocalPath0 = .
@@ -61,5 +71,8 @@ Global
 		SccProjectUniqueName3 = TBKMathTests\\TBKMathTests.csproj
 		SccProjectName3 = TBKMathTests
 		SccLocalPath3 = TBKMathTests
+		SccProjectUniqueName4 = TBKMathHelp\\TBKMathHelp.shfbproj
+		SccProjectName4 = TBKMathHelp
+		SccLocalPath4 = TBKMathHelp
 	EndGlobalSection
 EndGlobal

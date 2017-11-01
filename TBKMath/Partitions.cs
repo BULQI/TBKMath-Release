@@ -6,8 +6,18 @@ using System.Collections;
 
 namespace TBKMath
 {
+    /// <summary>
+    /// A partition is a semipartition with the additional constraint of having no overlapping blocks.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in The Set.</typeparam>
     public class Partition<T> : Semipartition<T>
     {
+        /// <summary>
+        /// Gets the block to which the argument is assigned.
+        /// </summary>
+        /// <param name="element">The element to be located.</param>
+        /// <returns>The block containing the element. Throws an ArgumentException if the element is not contained
+        /// in any block.</returns>
         public new HashSet<T> Assignments(T element)
         {
             if (!assignments.ContainsKey(element))
@@ -17,16 +27,28 @@ namespace TBKMath
             return assignments[element][0];
         }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public Partition()  : base()
         {
 
         }
 
+        /// <summary>
+        /// Implements the constructor for the base semipartition class.
+        /// </summary>
+        /// <param name="elements">As in semipartition.</param>
+        /// <param name="oneBlock">As in semipartition.</param>
         public Partition(List<T> elements, bool oneBlock = false) : base(elements, oneBlock)
         {
         
         }
 
+        /// <summary>
+        /// Implements the constructor for the base semipartition class.
+        /// </summary>
+        /// <param name="blocks">As in semipartition. Throws an ArgumentException if the blocks overlap.</param>
         public Partition(HashSet<HashSet<T>> blocks) : base(blocks)
         {
             foreach (KeyValuePair<T, List<HashSet<T>>> kvp in assignments)
@@ -38,6 +60,12 @@ namespace TBKMath
             }
         }
 
+        /// <summary>
+        /// Removes an element from its current block and places it into the specified block.
+        /// </summary>
+        /// <param name="element">The element to be moved.</param>
+        /// <param name="destination">The block to which the element is to be moved. If the destination is null,
+        /// creates a new block and places the element into it.</param>
         public void Move(T element, HashSet<T> destination = null)
         {
             // throw an exception if the element does not exist
@@ -77,6 +105,11 @@ namespace TBKMath
             assignments[element][0] = destination;
         }
 
+        /// <summary>
+        /// Adds a new element to the partition, placing it in the indicated block.
+        /// </summary>
+        /// <param name="element">The new element.</param>
+        /// <param name="destination">The block in which to place the new element. If null, makes a new block.</param>
         public void AddElement(T element, HashSet<T> destination = null)
         {
             if (elements.Contains(element))
@@ -107,6 +140,10 @@ namespace TBKMath
             TotalSize++;
         }
 
+        /// <summary>
+        /// Removes the indicated element. Updates blocks and assignments.
+        /// </summary>
+        /// <param name="element"></param>
         public void RemoveElement(T element)
         {
             if (!elements.Contains(element))
@@ -130,6 +167,10 @@ namespace TBKMath
             TotalSize--;
         }
 
+        /// <summary>
+        /// Adds new block and all of its elements as new elements.
+        /// </summary>
+        /// <param name="block">The block to add.</param>
         public new void AddBlock(HashSet<T> block)
         {
             if (blocks.Contains(block))
@@ -154,6 +195,12 @@ namespace TBKMath
             }
         }
 
+        /// <summary>
+        /// Creates a new partition from two existing partitions with no members in common.
+        /// </summary>
+        /// <param name="p1">A partition.</param>
+        /// <param name="p2">A partition with no members in common with the first partition.</param>
+        /// <returns></returns>
         public static Partition<T> Join(Partition<T> p1, Partition<T> p2)
         {
             foreach (T element in p1.elements) 
@@ -177,6 +224,10 @@ namespace TBKMath
             return newPartition;
         }
 
+        /// <summary>
+        /// Serializes the partition.
+        /// </summary>
+        /// <returns>A comma-delimited string with curly-bracket delimited sets.</returns>
         public override string ToString()
         {
             StringBuilder s = new StringBuilder();
@@ -197,13 +248,34 @@ namespace TBKMath
         }
     }
 
+    /// <summary>
+    /// A semipartition comprises a set (The Set) of elements, a set of blocks, and an assignment of elements to blocks.
+    /// Each element must be assigned to at least one block, and may be assigned to more than one.
+    /// </summary>
+    /// <typeparam name="T">The base type for members of the set.</typeparam>
     public class Semipartition<T> : IEnumerable
     {
+        /// <summary>
+        /// The total number of elements in The Set.
+        /// </summary>
         public int TotalSize;
+        /// <summary>
+        /// The elements contained in The Set.
+        /// </summary>
         protected List<T> elements;
+        /// <summary>
+        /// The set of blocks.
+        /// </summary>
         protected HashSet<HashSet<T>> blocks;
+        /// <summary>
+        /// The assignment of elements into blocks. Note that the assignment is not unique. Any element may be assigned to more than 
+        /// one block, but must be assigned to at least one.
+        /// </summary>
         protected Dictionary<T, List<HashSet<T>>> assignments;
         
+        /// <summary>
+        /// The number of blocks in the semipartition.
+        /// </summary>
         public int NumberOfBlocks
         {
             get
@@ -212,16 +284,26 @@ namespace TBKMath
             }
         }
 
+        /// <summary>
+        /// The blocks as a set of blocks.
+        /// </summary>
         public HashSet<HashSet<T>> Blocks
         {
             get { return blocks; }
         }
 
+        /// <summary>
+        /// The elements of The Set.
+        /// </summary>
         public List<T> Elements
         {
             get { return elements; }
         }
 
+        /// <summary>
+        /// The assignment of elements into blocks. Note that the assignment is not unique. Any element may be assigned to more than 
+        /// one block, but must be assigned to at least one.
+        /// </summary>
         public List<HashSet<T>> Assignments(T element)
         {
             if (!assignments.ContainsKey(element))
@@ -231,6 +313,9 @@ namespace TBKMath
             return assignments[element];
         }
 
+        /// <summary>
+        /// Constructor. Initializes the elements list, the assignments dictionary, and the blocks hashset.
+        /// </summary>
         public Semipartition()
         {
             elements = new List<T>();
@@ -239,6 +324,12 @@ namespace TBKMath
             blocks = new HashSet<HashSet<T>>();
         }
 
+        /// <summary>
+        /// Constructor. Initializes the elements list, the assignments dictionary, and the blocks hashset.
+        /// </summary>
+        /// <param name="elements">The elements that constitute the set, at least initially.</param>
+        /// <param name="singleBlock">If true, places all elements into a single block. If false, places each
+        /// element into its own block.</param>
         public Semipartition(List<T> elements, bool singleBlock = false)
         {
             this.elements = elements;
@@ -269,6 +360,11 @@ namespace TBKMath
             PurgeSubblocks();
         }
 
+        /// <summary>
+        /// Constructor. Initializes the elements list, the assignments dictionary, and the blocks hashset.
+        /// </summary>
+        /// <param name="blocks">The blocks provided in the argument become the blocks of the semipartition. The union of the blocks
+        /// is The Set.</param>
         public Semipartition(HashSet<HashSet<T>> blocks)
         {
             assignments = new Dictionary<T, List<HashSet<T>>>();
@@ -302,6 +398,11 @@ namespace TBKMath
             return new BlockEnum<T>(blocks);
         }
 
+        /// <summary>
+        /// Places the union of all the blocks in the argument into a single block. Removes all the initial blocks, 
+        /// retaining only the merged block.
+        /// </summary>
+        /// <param name="semipartition">The semipartition to be processed.</param>
         public static void MergeAllBlocks(Semipartition<T> semipartition)
         {
             semipartition.assignments = new Dictionary<T, List<HashSet<T>>>();
@@ -315,11 +416,20 @@ namespace TBKMath
             semipartition.blocks.Add(block);
         }
 
+        /// <summary>
+        /// Places the union of all the blocks in the instance into a single block. Removes all the initial blocks, 
+        /// retaining only the merged block.
+        /// </summary>
         public void MergeAllBlocks()
         {
             MergeAllBlocks(this);
         }
 
+        /// <summary>
+        /// Replaces a block with the partition of that block.
+        /// </summary>
+        /// <param name="block">The block to be partitioned.</param>
+        /// <param name="blockPartition">The partition of the specified block.</param>
         public void PartitionBlock(HashSet<T> block, Partition<T> blockPartition)
         {
             if (!blocks.Contains(block))
@@ -340,6 +450,10 @@ namespace TBKMath
             blocks.Remove(block);
         }
 
+        /// <summary>
+        /// Removes from the partition any blocks completely contained within another block.
+        /// </summary>
+        /// <param name="semipartition">The semipartition to process.</param>
         public static void PurgeSubblocks(Semipartition<T> semipartition)
         {
             List<HashSet<T>> toRemove = new List<HashSet<T>>();
@@ -372,13 +486,21 @@ namespace TBKMath
             }
         }
 
+        /// <summary>
+        /// Removes from the partition any blocks completely contained within another block.
+        /// </summary>
         public void PurgeSubblocks()
         {
             PurgeSubblocks(this);
         }
 
-        // Finds the nonoverlapping blocks and places them into a partition
-        // places the remaining overlapping blocks into a semipartition
+        /// <summary>
+        /// Finds the nonoverlapping blocks and places them into a partition 
+        /// places the remaining overlapping blocks into a semipartition 
+        /// </summary>
+        /// <param name="semipartition">The semipartition to be processed.</param>
+        /// <returns>A tuple containing a semipartition and a partition. The two have no elements in common, and
+        /// every element in the original semipartition is in one or the other item of the tuple.</returns> 
         public static Tuple<Semipartition<T>, Partition<T>> Decompose(Semipartition<T> semipartition)
         {
             Semipartition<T> newSemipartition = new Semipartition<T>();
@@ -418,11 +540,20 @@ namespace TBKMath
             return new Tuple<Semipartition<T>, Partition<T>>(newSemipartition, partition);
         }
 
+        /// <summary>
+        /// Perform a decomposition on this instance.
+        /// </summary>
+        /// <returns>As above for the static method.</returns>
         public Tuple<Semipartition<T>, Partition<T>> Decompose()
         {
             return Decompose(this);
         }
 
+        /// <summary>
+        /// Finds all pairs of blocks with non-empty intersection and merges them. Iterated until no overlapping pairs remain.
+        /// </summary>
+        /// <param name="semipartition">The semipartition to be processed.</param>
+        /// <returns>The resulting partition.</returns>
         public static Partition<T> MergeOverlappingBlocks(Semipartition<T> semipartition)
         {
             HashSet<HashSet<T>> blocks = new HashSet<HashSet<T>>();
@@ -476,11 +607,20 @@ namespace TBKMath
             return partition;
         }
 
+        /// <summary>
+        /// Applies the static MergeOverlappingBlocks to this instance.
+        /// </summary>
+        /// <returns>As in the static method.</returns>
         public Partition<T> MergeOverlappingBlocks()
         {
             return MergeOverlappingBlocks(this);
         }
 
+        /// <summary>
+        /// Checks to see if any pair of blocks has non-null intersection.
+        /// </summary>
+        /// <param name="semipartition">The semipartition to be examined.</param>
+        /// <returns>True if any pair of blocks has non-null intersection. False otherwise.</returns>
         public static bool ContainsOverlappingBlocks(Semipartition<T> semipartition)
         {
             foreach (HashSet<T> block1 in semipartition)
@@ -499,6 +639,10 @@ namespace TBKMath
             return false;
         }
 
+        /// <summary>
+        /// Adds block to the set of blocks. Updates members and assignments as necessary.
+        /// </summary>
+        /// <param name="block">The block to be added.</param>
         public void AddBlock(HashSet<T> block)
         {
             blocks.Add(block);
@@ -517,6 +661,10 @@ namespace TBKMath
             PurgeSubblocks();
         }
 
+        /// <summary>
+        /// Serializes the semipartition. Relies on the ToString() method for elements.
+        /// </summary>
+        /// <returns>A comma-delitimed string containing curly-bracket-delimited sets.</returns>
         public override string ToString()
         {
             StringBuilder s = new StringBuilder();
@@ -536,6 +684,10 @@ namespace TBKMath
             return s.ToString();
         }
 
+        /// <summary>
+        /// Converts the semipartition to a table. Relies on the ToString() method for the elements.
+        /// </summary>
+        /// <returns>A List of lists of type string. Each row in the table starts with a block index.</returns>
         public List<List<string>> ToTable()
         {
             List<List<string>> table = new List<List<string>>();
@@ -561,6 +713,12 @@ namespace TBKMath
         }
     }
 
+    /// <summary>
+    /// A delegate to a function that computes a score over elements in any set of elements.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the set.</typeparam>
+    /// <param name="set">The set of elements that serves as argument to the function.</param>
+    /// <returns></returns>
     public delegate double GetScore<T>(HashSet<T> set);
 
     /// <summary>
