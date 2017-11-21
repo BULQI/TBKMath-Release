@@ -278,5 +278,24 @@ namespace TestMathLibrary
             double logstary = Utilities.LogStar(y);
             MessageBox.Text += "Log*(" + y + ") = " + logstary + "\n";
         }
+
+        private void reroot_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Title = "Open Newick file with tree.";
+            ofd.Filter = "Newick file|*.nwk|all files|*.*";
+            if (!(bool)ofd.ShowDialog())
+                return;
+
+
+            string treeString = System.IO.File.ReadAllText(ofd.FileName);
+            Tree<string> tree = new Tree<string>(treeString);
+           
+            tree = TestFunctions.RerootTree(tree, rootNameBox.Text);
+            treeString = tree.GetDescriptor();
+
+            System.IO.File.WriteAllText("rerooted.nwk", treeString);
+            MessageBox.Text += "Done.\n";
+        }
     }
 }

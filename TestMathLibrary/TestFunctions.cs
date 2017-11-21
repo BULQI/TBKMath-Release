@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TBKMath;
 
 namespace TestMathLibrary
 {
@@ -16,6 +17,14 @@ namespace TestMathLibrary
         {
             return x - Math.Log(x) - 2;
         }
+
+        public static Tree<string> RerootTree(Tree<string> tree, string newRoot)
+        {
+            Tree<string> nuRoot = Tree<string>.GetDescendant(tree, newRoot);
+            nuRoot.RootHere();
+            return nuRoot;
+        }
+
     }
 
     public class TestStatistics

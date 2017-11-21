@@ -15,5 +15,7 @@
         <TextBox x:Name="smSizeBox" HorizontalAlignment="Left" Height="23" Margin="93,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75"/>
         <Button Content="Log*" HorizontalAlignment="Left" Margin="12,237,0,0" VerticalAlignment="Top" Width="75" Click="logStarClick"/>
         <TextBox x:Name="yBox" HorizontalAlignment="Left" Height="23" Margin="92,236,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75"/>
+        <Button Content="reroot" HorizontalAlignment="Left" Margin="221,93,0,0" VerticalAlignment="Top" Width="75" Click="reroot_Click"/>
+        <TextBox Name="rootNameBox" Height="25" Margin="221,120,0,127"/>
     </Grid>
 </Window>

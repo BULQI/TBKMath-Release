@@ -112,25 +112,6 @@ namespace TBKMath
         /// </summary>
         public string Descriptor;
 
-        private int maxLevel;
-        /// <summary>
-        /// The largest number of branches from the root of this tree to any of its descendants.
-        /// </summary>
-        public int MaxLevel
-        {
-            get { return maxLevel; }
-        }
-
-        private int level;
-        /// <summary>
-        /// The number of branches between this tree and the global root.
-        /// </summary>
-        public int Level
-        {
-            set { level = value; }
-            get { return level; }
-        }
-
         /// <summary>
         /// The object associated with the root node of this tree.
         /// </summary>
@@ -150,7 +131,6 @@ namespace TBKMath
             if (parent != null)
             {
                 Parent = parent;
-                Level = parent.Level + 1;
             }
 
             NodeInfo ni = ParseNewick(newick);
@@ -172,13 +152,11 @@ namespace TBKMath
         {
             Children.Add(child);
             child.Parent = this;
-            ComputeMaxLevel(this);
         }
 
         public void RemoveChild(Tree<T> child)
         {
             Children.Remove(child);
-            ComputeMaxLevel(this);
         }
 
         private static int findMatchingRightParenthesis(string text, int startPosition)
@@ -337,10 +315,6 @@ namespace TBKMath
             {
                 desc += ":" + tree.BranchLength.ToString();
             }
-            else
-            {
-                desc += ";";
-            }
 
             return desc;
         }
@@ -407,25 +381,7 @@ namespace TBKMath
         public void SetParent(Tree<T> p, double distance = 0)
         {
             Parent = p;
-            level = p.Level;
             branchLength = distance;
-        }
-
-        /// <summary>
-        /// Computes the maximum number of branch-crossings required to reach all a tree's children.
-        /// </summary>
-        /// <param name="t">The tree to be examined.</param>
-        public static void ComputeMaxLevel(Tree<T> t)
-        {
-            t.maxLevel = t.level;
-            foreach (Tree<T> child in t.Children)
-            {
-                ComputeMaxLevel(child);
-                if (child.maxLevel > t.maxLevel)
-                {
-                    t.maxLevel = child.maxLevel;
-                }
-            }
         }
 
         /// <summary>
@@ -522,6 +478,47 @@ namespace TBKMath
             {
                 renameNodes(nameKey, child);
             }
+        }
+
+        public static void ReverseAncestry(Tree<T> tree, Tree<T> child)
+        {
+            if (child != null && !tree.Children.Contains(child))
+                return;
+
+            if (tree.Parent != null)
+                ReverseAncestry(tree.Parent, tree);
+
+            if (child != null)
+            {
+                tree.RemoveChild(child);
+                child.Parent = null;
+                tree.Parent = child;
+                tree.BranchLength = child.BranchLength;
+                child.AddChild(tree);
+            }
+        }
+
+        public void RootHere()
+        {
+            if (Parent == null)
+                return;
+
+            ReverseAncestry(Parent, this);
+        }
+
+        public static Tree<T> GetDescendant(Tree<T> tree, string name)
+        {
+            if (tree.Name == name)
+                return tree;
+
+            Tree<T> descendant = null;
+            foreach (Tree<T> child in tree.Children)
+            {
+                descendant = GetDescendant(child, name);
+                if (descendant != null)
+                    return descendant;
+            }
+            return null;
         }
     }
 }
