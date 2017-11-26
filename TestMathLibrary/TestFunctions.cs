@@ -25,6 +25,11 @@ namespace TestMathLibrary
             return nuRoot;
         }
 
+        public static Tree<int> CondenseTree(Tree<string> tree, double theta)
+        {
+            return Tree<string>.CondenseAndCount(tree, theta);
+        }
+
     }
 
     public class TestStatistics

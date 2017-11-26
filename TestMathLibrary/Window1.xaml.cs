@@ -297,5 +297,38 @@ namespace TestMathLibrary
             System.IO.File.WriteAllText("rerooted.nwk", treeString);
             MessageBox.Text += "Done.\n";
         }
+
+        private void condense_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Title = "Open Newick file with tree.";
+            ofd.Filter = "Newick file|*.nwk|all files|*.*";
+            if (!(bool)ofd.ShowDialog())
+                return;
+
+
+            string treeString = System.IO.File.ReadAllText(ofd.FileName);
+            Tree<string> tree = new Tree<string>(treeString);
+
+            double theta = double.Parse(rootNameBox.Text);
+            Tree<int> newTree = TestFunctions.CondenseTree(tree, theta);
+            int first = 1;
+            Tree<int>.NameIntermediates(newTree, ref first);
+            concateNamesAndContents(newTree);
+            treeString = newTree.GetDescriptor();
+
+            System.IO.File.WriteAllText("condensed.nwk", treeString);
+            MessageBox.Text += "Done.\n";
+        }
+
+        private void concateNamesAndContents(Tree<int> tree)
+        {
+            foreach (Tree<int> child in tree.Children)
+            {
+                concateNamesAndContents(child);
+            }
+            tree.Name += "|" + tree.Contents.ToString();
+        }
+
     }
 }

@@ -122,6 +122,9 @@ namespace TBKMath
             Children = new List<Tree<T>>();
             Descriptor = newick;
 
+            if (newick == "")
+                return;
+
             // remove unnecessary semicolon if it is present
             if (newick.Last() == ';')
             {
@@ -506,6 +509,13 @@ namespace TBKMath
             ReverseAncestry(Parent, this);
         }
 
+        public static Tree<T> Reroot(Tree<T> tree, string newRootName)
+        {
+            Tree<T> newTree = GetDescendant(tree, newRootName);
+            newTree.RootHere();
+            return newTree;
+        }
+
         public static Tree<T> GetDescendant(Tree<T> tree, string name)
         {
             if (tree.Name == name)
@@ -520,5 +530,75 @@ namespace TBKMath
             }
             return null;
         }
+
+        public static Tree<List<string>> Condense(Tree<T> tree, double theta)
+        {
+            Tree<List<string>> newTree = new Tree<List<string>>(tree.Name);
+            newTree.BranchLength = tree.BranchLength;
+            newTree.Contents = new List<string>() { tree.Name };
+            foreach (Tree<T> child in tree.Children)
+            {
+                Tree<List<string>> childTree = Condense(child, theta);
+                if (child.BranchLength > theta)
+                {
+                    newTree.Children.Add(childTree);
+                    childTree.Parent = newTree;
+                    childTree.BranchLength = child.BranchLength;
+                }
+                else
+                {
+                    newTree.Contents.AddRange(childTree.Contents);
+                    foreach (Tree<List<string>> grandchild in childTree.Children)
+                    {
+                        newTree.Children.Add(grandchild);
+                        grandchild.BranchLength += child.BranchLength;
+                        grandchild.Parent = newTree;
+                    }
+                }
+            }
+            return newTree;
+        }
+
+        public static Tree<int> CondenseAndCount(Tree<T> tree, double theta)
+        {
+            Tree<int> newTree = new Tree<int>(tree.Name);
+            newTree.BranchLength = tree.BranchLength;
+            newTree.Contents = tree.Children.Count == 0 ? 1 : 0;
+            foreach (Tree<T> child in tree.Children)
+            {
+                Tree<int> childTree = CondenseAndCount(child, theta);
+                if (child.BranchLength > theta)
+                {
+                    newTree.Children.Add(childTree);
+                    childTree.Parent = newTree;
+                    childTree.BranchLength = child.BranchLength;
+                }
+                else
+                {
+                    newTree.Contents += childTree.Contents;
+                    foreach (Tree<int> grandchild in childTree.Children)
+                    {
+                        newTree.Children.Add(grandchild);
+                        grandchild.BranchLength += child.BranchLength;
+                        grandchild.Parent = newTree;
+                    }
+                }
+            }
+            return newTree;
+        }
+         
+        public static void NameIntermediates(Tree<T> tree, ref int next)
+        {
+            if (tree.Name == null || tree.Name.Length == 0)
+            {
+                tree.Name = "I" + next.ToString();
+                next++;
+            }
+            foreach (Tree<T> child in tree.Children)
+            {
+                NameIntermediates(child, ref next);
+            }
+        }
+
     }
 }

@@ -17,5 +17,6 @@
         <TextBox x:Name="yBox" HorizontalAlignment="Left" Height="23" Margin="92,236,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75"/>
         <Button Content="reroot" HorizontalAlignment="Left" Margin="221,93,0,0" VerticalAlignment="Top" Width="75" Click="reroot_Click"/>
         <TextBox Name="rootNameBox" Height="25" Margin="221,120,0,127"/>
+        <Button Content="condense" HorizontalAlignment="Left" Margin="221,150,0,0" VerticalAlignment="Top" Width="75" Click="condense_Click"/>
     </Grid>
 </Window>
