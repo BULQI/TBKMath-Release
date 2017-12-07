@@ -238,6 +238,7 @@ namespace TBKMath
                 return new double[0];
 
             double[] cumulated = new double[vector.Length];
+            cumulated[0] = vector[0];
             for (int i = 1; i < cumulated.Length; i++)
             {
                 cumulated[i] = cumulated[i - 1] + vector[i];
@@ -254,6 +255,7 @@ namespace TBKMath
                 return new int[0];
 
             int[] cumulated = new int[vector.Length];
+            cumulated[0] = vector[0];
             for (int i = 1; i < cumulated.Length; i++)
             {
                 cumulated[i] = cumulated[i - 1] + vector[i];

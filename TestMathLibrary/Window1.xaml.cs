@@ -281,17 +281,19 @@ namespace TestMathLibrary
 
         private void reroot_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.Title = "Open Newick file with tree.";
-            ofd.Filter = "Newick file|*.nwk|all files|*.*";
-            if (!(bool)ofd.ShowDialog())
-                return;
+            //Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            //ofd.Title = "Open Newick file with tree.";
+            //ofd.Filter = "Newick file|*.nwk|all files|*.*";
+            //if (!(bool)ofd.ShowDialog())
+            //    return;
 
+            //string treeString = System.IO.File.ReadAllText(ofd.FileName);
 
-            string treeString = System.IO.File.ReadAllText(ofd.FileName);
+            string treeString = "(c5970S1V11:0.03073,(MRCA:0.00006,c8136S1V8:0.00249):0.00250,c8756S1V5:0.02533)";
             Tree<string> tree = new Tree<string>(treeString);
-           
-            tree = TestFunctions.RerootTree(tree, rootNameBox.Text);
+
+            //            tree = TestFunctions.RerootTree(tree, rootNameBox.Text);
+            tree = TestFunctions.RerootTree(tree, "MRCA");
             treeString = tree.GetDescriptor();
 
             System.IO.File.WriteAllText("rerooted.nwk", treeString);

@@ -599,6 +599,5 @@ namespace TBKMath
                 NameIntermediates(child, ref next);
             }
         }
-
     }
 }
