@@ -599,5 +599,24 @@ namespace TBKMath
                 NameIntermediates(child, ref next);
             }
         }
+
+        public static void NameIntermediates2(Tree<T> tree, ref int next)
+        {
+            if (tree.Name == null || tree.Name.Length == 0)
+            {
+                tree.Name = "I" + next.ToString();
+                next++;
+            }
+            else
+            {
+                tree.Name = tree.Name + ".I" + next.ToString();
+                next++;
+            }
+            foreach (Tree<T> child in tree.Children)
+            {
+                NameIntermediates2(child, ref next);
+            }
+        }
+
     }
 }
