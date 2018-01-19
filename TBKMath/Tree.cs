@@ -151,6 +151,230 @@ namespace TBKMath
 
         }
 
+        /// <summary>
+        /// copy constructor
+        /// </summary>
+        /// <param name="src"></param>
+        public Tree(Tree<T> src)
+        {
+            Name = src.Name;
+            branchLength = src.branchLength;
+            Descriptor = src.Descriptor;
+            Contents = src.Contents;
+            if (src.Children != null)
+            {
+                this.Children = new List<Tree<T>>(src.Children.Count);
+                foreach (var child in src.Children)
+                {
+                    var kid = new Tree<T>(child);
+                    kid.Parent = this;
+                    this.Children.Add(kid);
+                }
+            }
+        }
+
+        /// <summary>
+        /// get distance from root to the node with given name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public double GetDistanceToNode(string name)
+        {
+            if (this.Name == name) return 0;
+            foreach (var child in Children)
+            {
+                var d = child.GetDistanceHelper(name);
+                if (d != double.MinValue) return d;
+            }
+            throw new Exception("target node not found exception");
+        }
+
+
+        /// <summary>
+        /// get path from root to the node with given name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string[] GetPath(string name)
+        {
+            var pathstr = GetPathHelper(name);
+            if (pathstr == null)
+            {
+                throw new Exception("target node not found exception");
+            }
+            return pathstr.Split(',');
+        }
+
+        /// <summary>
+        /// helps to find path
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string GetPathHelper(string name)
+        {
+            if (this.Name == name)
+            {
+                return name;
+            }
+            foreach (var child in Children)
+            {
+                var kidpath = child.GetPathHelper(name);
+                if (kidpath != null)
+                {
+                    return this.Name + "," + kidpath;
+                }
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// recursively find node to compute distance
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private double GetDistanceHelper(string name)
+        {
+            if (this.Name == name)
+            {
+                return this.branchLength;
+            }
+            foreach (var child in this.Children)
+            {
+                var d = child.GetDistanceHelper(name);
+                if (d != double.MinValue)
+                {
+                    return d + this.branchLength;
+                }
+            }
+            return double.MinValue;
+        }
+
+        /// <summary>
+        /// return names for all nodes.
+        /// </summary>
+        /// <returns></returns>
+        public List<String> getNodeNames()
+        {
+            var trlist = findSubTree();
+            return trlist.Select(x => x.Name).ToList();
+        }
+
+        /// <summary>
+        /// find all nodes (tree)
+        /// </summary>
+        /// <returns></returns>
+        private List<Tree<T>> findSubTree()
+        {
+            List<Tree<T>> list = new List<Tree<T>>();
+            findSubTree(list);
+            return list;
+        }
+
+        /// <summary>
+        /// find all nodes helper
+        /// </summary>
+        /// <param name="trlist"></param>
+        private void findSubTree(List<Tree<T>> trlist)
+        {
+            trlist.Add(this);
+            foreach (var child in Children)
+            {
+                child.findSubTree(trlist);
+            }
+        }
+
+        /// <summary>
+        /// return dist matrix in indexed format.
+        /// </summary>
+        /// <returns></returns>
+        public double[][] findAllDistanceIndexed()
+        {
+            Dictionary<Tuple<string, string>, double> distDict = new Dictionary<Tuple<string, string>, double>();
+            List<Tree<T>> trlist = findSubTree();
+            double[][] distMatrix = new double[trlist.Count][];
+            for (int i = 0; i < trlist.Count; i++)
+            {
+                distMatrix[i] = new double[trlist.Count];
+            }
+
+            for (int i = 0; i < trlist.Count; i++)
+            {
+                distMatrix[i][i] = 0;
+                for (int j = i + 1; j < trlist.Count; j++)
+                {
+                    var d = findDistance(trlist[i], trlist[j]);
+                    distMatrix[i][j] = d;
+                    distMatrix[j][i] = d;
+                }
+            }
+            return distMatrix;
+        }
+
+        /// <summary>
+        /// find lowest common accessor of the two nodes.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        Tree<T> findLCA(Tree<T> x, Tree<T> y)
+        {
+            if (x == this || y == this) return this;
+            Tree<T> a = null;
+            Tree<T> b = null;
+            foreach (var child in Children)
+            {
+                var lca = child.findLCA(x, y);
+                if (lca == null) continue;
+                if (a == null) a = lca;
+                else
+                {
+                    b = lca;
+                    break;
+                }
+            }
+            if (a != null && b != null) return this;
+            return a ?? b;
+        }
+
+        /// <summary>
+        /// find distance between tree x and y
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        double findDistance(Tree<T> x, Tree<T> y)
+        {
+            var lca = findLCA(x, y);
+            return lca.findDistance(x, 0) + lca.findDistance(y, 0);
+        }
+
+        /// <summary>
+        /// find the distance between root and node x,
+        /// add d to the return value.
+        /// if not found, return double.MinValue
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        double findDistance(Tree<T> x, double d)
+        {
+            if (x == this)
+            {
+                return d;
+            }
+            foreach (var child in Children)
+            {
+                var td = child.findDistance(x, d + child.branchLength);
+                if (td != double.MinValue)
+                {
+                    return td;
+                }
+            }
+            return double.MinValue;
+        }
+
+
         public void AddChild(Tree<T> child)
         {
             Children.Add(child);
