@@ -254,10 +254,25 @@ namespace TBKMath
         /// return names for all nodes.
         /// </summary>
         /// <returns></returns>
-        public List<String> getNodeNames()
+        internal List<String> getNodeNames()
         {
             var trlist = findSubTree();
             return trlist.Select(x => x.Name).ToList();
+        }
+
+        /// <summary>
+        /// return only leaf nodes
+        /// </summary>
+        public List<string> getLeafNodeNames()
+        {
+            var trlist = findSubTree();
+            return trlist.Where(y => y.Children.Count == 0).Select(x => x.Name).ToList();
+        }
+
+        public List<string> getInternalNodeNames()
+        {
+            var trlist = findSubTree();
+            return trlist.Where(y => y.Children.Count > 0).Select(x => x.Name).ToList();
         }
 
         /// <summary>
@@ -286,26 +301,42 @@ namespace TBKMath
 
         /// <summary>
         /// return dist matrix in indexed format.
+        /// first dimension for leave nodes
+        /// second dimension is internal nodes.
         /// </summary>
         /// <returns></returns>
-        public double[][] findAllDistanceIndexed()
+        public double[][] GetDistanceMatrix()
         {
-            Dictionary<Tuple<string, string>, double> distDict = new Dictionary<Tuple<string, string>, double>();
             List<Tree<T>> trlist = findSubTree();
-            double[][] distMatrix = new double[trlist.Count][];
-            for (int i = 0; i < trlist.Count; i++)
+            //List<Tree<T>> leaves = trlist.Where(x => x.Children.Count == 0).ToList();
+            //List<Tree<T>> branches = trlist.Where(x => x.Children.Count > 0).ToList();
+
+            var leaves = new List<Tree<T>>();
+            var branches = new List<Tree<T>>();
+            foreach (var tree in trlist)
             {
-                distMatrix[i] = new double[trlist.Count];
+                if (tree.Children.Count > 0)
+                {
+                    branches.Add(tree);
+                }
+                else
+                {
+                    leaves.Add(tree);
+                }
             }
 
-            for (int i = 0; i < trlist.Count; i++)
+            double[][] distMatrix = new double[leaves.Count][];
+            for (int i = 0; i < leaves.Count; i++)
             {
-                distMatrix[i][i] = 0;
-                for (int j = i + 1; j < trlist.Count; j++)
+                distMatrix[i] = new double[branches.Count];
+            }
+
+            for (int i = 0; i < leaves.Count; i++)
+            {
+                for (int j = 0; j < branches.Count; j++)
                 {
-                    var d = findDistance(trlist[i], trlist[j]);
+                    var d = findDistance(leaves[i], branches[j]);
                     distMatrix[i][j] = d;
-                    distMatrix[j][i] = d;
                 }
             }
             return distMatrix;
@@ -346,6 +377,8 @@ namespace TBKMath
         double findDistance(Tree<T> x, Tree<T> y)
         {
             var lca = findLCA(x, y);
+            //var d1 = lca.findDistance(x, 0);
+            //var d2 = lca.findDistance(y, 0);
             return lca.findDistance(x, 0) + lca.findDistance(y, 0);
         }
 
