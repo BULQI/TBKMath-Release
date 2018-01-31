@@ -139,6 +139,7 @@
     <Compile Include="ByteArrayEqualityComparer.cs" />
     <Compile Include="ByteBits.cs" />
     <Compile Include="CodeCogsSharp.cs" />
+    <Compile Include="Converter.cs" />
     <Compile Include="DataTable.cs" />
     <Compile Include="EmpiricalClusterer.cs" />
     <Compile Include="EstimationProcess.cs" />

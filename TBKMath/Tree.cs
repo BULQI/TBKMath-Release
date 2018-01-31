@@ -173,11 +173,31 @@ namespace TBKMath
             }
         }
 
+        public static Tree<T> ChangeContentType<U>(Tree<U> src, TConverter<T,U> converter)
+        {
+            Tree <T> t = new Tree<T>("");
+            t.Name = src.Name;
+            t.branchLength = src.branchLength;
+            t.Descriptor = src.Descriptor;
+            t.Contents = converter.Convert(src.Contents);
+            if (src.Children != null)
+            {
+                t.Children = new List<Tree<T>>(src.Children.Count);
+                foreach (Tree<U> child in src.Children)
+                {
+                    Tree<T> kid = ChangeContentType(child, converter);
+                    kid.Parent = t;
+                    t.Children.Add(kid);
+                }
+            }
+            return t;
+        }
+        
         /// <summary>
-        /// get distance from root to the node with given name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+                 /// get distance from root to the node with given name
+                 /// </summary>
+                 /// <param name="name"></param>
+                 /// <returns></returns>
         public double GetDistanceToNode(string name)
         {
             if (this.Name == name) return 0;
