@@ -173,13 +173,16 @@ namespace TBKMath
             }
         }
 
-        public static Tree<T> ChangeContentType<U>(Tree<U> src, TConverter<T,U> converter)
+        public static Tree<T> ChangeContentType<U>(Tree<U> src, TConverter<T, U> converter)
         {
-            Tree <T> t = new Tree<T>("");
+            Tree<T> t = new Tree<T>("");
             t.Name = src.Name;
             t.branchLength = src.branchLength;
             t.Descriptor = src.Descriptor;
-            t.Contents = converter.Convert(src.Contents);
+            if (src.Contents != null)
+            {
+                t.Contents = converter.Convert(src.Contents);
+            }
             if (src.Children != null)
             {
                 t.Children = new List<Tree<T>>(src.Children.Count);
