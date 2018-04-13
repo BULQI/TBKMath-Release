@@ -197,10 +197,10 @@ namespace TBKMath
         }
         
         /// <summary>
-                 /// get distance from root to the node with given name
-                 /// </summary>
-                 /// <param name="name"></param>
-                 /// <returns></returns>
+        /// get distance from root to the node with given name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public double GetDistanceToNode(string name)
         {
             if (this.Name == name) return 0;
