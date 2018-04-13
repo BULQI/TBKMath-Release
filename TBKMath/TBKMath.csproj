@@ -141,6 +141,7 @@
     <Compile Include="CodeCogsSharp.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="DataTable.cs" />
+    <Compile Include="DoubleTable.cs" />
     <Compile Include="EmpiricalClusterer.cs" />
     <Compile Include="EstimationProcess.cs" />
     <Compile Include="FileIDs.cs" />
