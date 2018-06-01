@@ -19,9 +19,9 @@ namespace DirichletProcessMCMC
         // The marginal probability of assignment to each cluster, including the null cluster, is computed
         // and the assignment is then made randomly according to the marginals.
 
-            // the main data structure should be a set of subsets
-            // must be able to select an entity at random
-            // must be able to locate the subset to which the entity is assigned
+        // the main data structure should be a set of subsets
+        // must be able to select an entity at random
+        // must be able to locate the subset to which the entity is assigned
 
 
         private double alpha;
@@ -29,8 +29,9 @@ namespace DirichletProcessMCMC
         private int totalNumber;
         private List<T> entities;
         private HashSet<HashSet<T>> partition;
+        private Dictionary<T, HashSet<T>> assignments;
 
-        private void ComputePriors()
+        private void ComputePriorProbabilities()
         {
             if (priorProbability == null)
             {
@@ -47,13 +48,56 @@ namespace DirichletProcessMCMC
             }
         }
 
-        private void ComputerPriorProbability(HashSet<T> block)
+        private bool RemoveEntity(T entity)
+        {
+            if (!assignments.ContainsKey(entity))
+            {
+                return false;
+            }
+
+            assignments[entity].Remove(entity);
+            ComputePriorProbability(assignments[entity]);
+            assignments[entity] = null;
+            return true;
+        }
+
+        private bool AddEntity(T entity, HashSet<T> block)
+        {
+            if (block == null)
+            {
+                block = new HashSet<T>();
+                block.Add(entity);
+                if (!assignments.ContainsKey(entity))
+                {
+                    assignments.Add(entity, block);
+                }
+                else
+                {
+                    assignments[entity] = block;
+                }
+                ComputePriorProbability(block);
+            }
+            return true;
+        }
+
+        private void ComputePriorProbability(HashSet<T> block)
         {
             if (!priorProbability.ContainsKey(block))
             {
                 priorProbability.Add(block, double.NaN);
             }
             priorProbability[block] = block.Count / (alpha + totalNumber);
+        }
+
+        private double Likelihood(HashSet<T> block)
+        {
+            // this will be replaced by a delegate
+            return 0;
+        }
+
+        private double Likelihood(T entity, HashSet<T> block)
+        {
+            return 0;
         }
     }
 }
