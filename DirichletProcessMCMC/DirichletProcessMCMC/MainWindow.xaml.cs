@@ -24,5 +24,14 @@ namespace DirichletProcessMCMC
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            int n = 1000;
+            int[] entities = new int[n];
+            for (int i = 0; i < n; i++) { entities[i] = i; }
+            DPMCMC<int> dpmcmc = new DPMCMC<int>(entities, 1);
+            dpmcmc.Initialize();
+        }
     }
 }
