@@ -742,7 +742,10 @@ namespace TBKMath
             {
                 CollectAllContents(child, contents);
             }
-            contents.Add(tree.Name, tree.Contents);
+            if (tree.Name != "" && tree.Contents != null)
+            {
+                contents.Add(tree.Name, tree.Contents);
+            }
             return contents;
         }
 
