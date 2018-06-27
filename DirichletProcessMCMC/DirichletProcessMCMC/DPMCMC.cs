@@ -134,7 +134,7 @@ namespace DirichletProcessMCMC
             {
                 p = block.Count / (alpha + workingNumber);
             }
-            return p * Math.Exp(LogLikelihood(entity, block));
+            return p * Math.Exp(LogLikelihood(entity, block) - LogLikelihood(block));
         }
 
         private bool RemoveEntity(int iEntity)
@@ -212,5 +212,11 @@ namespace DirichletProcessMCMC
             temp.Add(entity);
             return logLikDel(temp);
         }
+
+        private double LogLikelihood(HashSet<T> block)
+        {
+            return logLikDel(block);
+        }
+
     }
 }

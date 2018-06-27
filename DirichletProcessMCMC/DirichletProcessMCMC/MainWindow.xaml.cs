@@ -129,8 +129,7 @@ namespace DirichletProcessMCMC
             Troschuetz.Random.Distributions.Continuous.NormalDistribution rnorm = new Troschuetz.Random.Distributions.Continuous.NormalDistribution();
             int n = SizeBox.AsInt(10);
             double alpha = AlphaBox.AsDouble(1);
-            double[] entities = new double[n];
-            for (int i = 0; i < n; i++) { entities[i] = rnorm.NextDouble(); }
+            double[] entities = GenerateProcess(n, alpha, 3, 1);
 
             // test likelihood
             StringBuilder s = new StringBuilder();
@@ -147,6 +146,50 @@ namespace DirichletProcessMCMC
             dpmcmc.Initialize();
             string history = dpmcmc.Run(10000);
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.File.WriteAllText(path + @"\DPMCMCHistory.txt", history);
+        }
+
+        private double[] GenerateProcess(int n, double alpha, double sigma1, double sigma2)
+        {
+            Troschuetz.Random.Distributions.Continuous.NormalDistribution rnorm1 = new Troschuetz.Random.Distributions.Continuous.NormalDistribution();
+            rnorm1.Mu = 0;
+            rnorm1.Sigma = sigma1;
+
+            Troschuetz.Random.Distributions.Continuous.NormalDistribution rnorm2 = new Troschuetz.Random.Distributions.Continuous.NormalDistribution();
+            rnorm2.Mu = 0;
+            rnorm2.Sigma = sigma2;
+
+            Troschuetz.Random.Distributions.Discrete.CategoricalDistribution rcat = new Troschuetz.Random.Distributions.Discrete.CategoricalDistribution();
+            rcat.Weights = new List<double>() { 1 };
+            List<double> p = new List<double>();
+            List<double> mu = new List<double>();
+            double[] x = new double[n];
+            List<int> counts = new List<int>();
+
+            int k = 0;
+            for (int i = 0; i < n; i++)
+            {
+                int j = rcat.Next();
+                if (j == k)
+                {
+                    mu.Add(rnorm1.NextDouble());
+                    counts.Add(1);
+                    k++;
+                }
+                else
+                {
+                    counts[j]++;
+                }
+                x[i] = rnorm2.NextDouble() + mu[j];
+                List<double> weights = new List<double>();
+                for (int k1 = 0; k1 < k; k1++)
+                {
+                    weights.Add(counts[k1] / (alpha + k));
+                }
+                weights.Add(alpha / (alpha + k));
+                rcat.Weights = weights;
+            }
+            return x;
         }
     }
 }
