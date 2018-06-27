@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Button Content="go" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="go" HorizontalAlignment="Left" Margin="332,67,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <TextBox Name="SizeBox" HorizontalAlignment="Left" Height="23" Margin="287,10,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="120"/>
+        <TextBox Name="AlphaBox" HorizontalAlignment="Left" Height="23" Margin="287,38,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="218,13,0,0" TextWrapping="Wrap" Text="size" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.796"/>
+        <TextBlock HorizontalAlignment="Left" Margin="218,41,0,0" TextWrapping="Wrap" Text="alpha" VerticalAlignment="Top" RenderTransformOrigin="0.094,-0.013"/>
 
     </Grid>
 </Window>

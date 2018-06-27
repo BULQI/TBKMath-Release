@@ -7,7 +7,8 @@ using TBKMath;
 
 namespace DirichletProcessMCMC
 {
-    public class DPMCMC<T> where T: new()
+    public delegate double LogLikelihoodDelegate<T>(HashSet<T> block);
+    public class DPMCMC<T> where T : new()
     {
         // Start with a set of objects
         // The goal is to assign them to subsets when the number of subsets is unknown.
@@ -29,50 +30,97 @@ namespace DirichletProcessMCMC
         private int totalNumber;
         private int workingNumber;
         private T[] entities;
-        private HashSet<HashSet<T>> partition;
-        private Dictionary<HashSet<T>, double> priorProbability;
-        private Dictionary<HashSet<T>, double> likelihood;
-        private Dictionary<T, HashSet<T>> assignments;
-        private GeneralDiscreteDistribution<HashSet<T>> probBlock;
-        private GeneralDiscreteDistribution<T> probObject;
+        private Dictionary<int, HashSet<T>> blocks;
+        private Dictionary<int, double> logLikelihoods;
+        private Dictionary<int, int> assignments;
+        private GeneralDiscreteDistribution<int> probBlock;
+        private GeneralDiscreteDistribution<int> probObject;
+        private int samplingInterval = 100;
+        private List<int> BlockIndices;
+        private LogLikelihoodDelegate<T> logLikDel;
+        private double sumLogLik;
 
-        public DPMCMC(T[] _entities, double _alpha)
+        public DPMCMC(T[] _entities, double _alpha, LogLikelihoodDelegate<T> logLikelihoodDelegate)
         {
             entities = _entities;
             totalNumber = _entities.Length;
             alpha = _alpha;
-
+            logLikDel = logLikelihoodDelegate;
             double[] p = new double[totalNumber];
-            double q = 1 / totalNumber;
+            double q = 1.0 / totalNumber;
             for (int i = 0; i < totalNumber; i++) { p[i] = q; }
-            probObject = new GeneralDiscreteDistribution<T>(entities, p);
-            partition = new HashSet<HashSet<T>>();
-            partition.Add(new HashSet<T>());
-            assignments = new Dictionary<T, HashSet<T>>();
+
+            int[] indices = new int[totalNumber];
+            for (int i = 0; i < totalNumber; i++) { indices[i] = i; }
+            probObject = new GeneralDiscreteDistribution<int>(indices, p);
+
+            BlockIndices = new List<int>();
+            for (int i = 0; i < totalNumber + 1; i++) { BlockIndices.Add(i); }
+
+            blocks = new Dictionary<int, HashSet<T>>();
+            blocks.Add(0, new HashSet<T>());
+            logLikelihoods = new Dictionary<int, double>();
+            logLikelihoods.Add(0, 0);
+            BlockIndices.Remove(0);
+            assignments = new Dictionary<int, int>();
         }
 
         public void Initialize()
         {
             workingNumber = 0;
-            foreach (T entity in entities)
+            sumLogLik = 0;
+            for (int i = 0; i < totalNumber; i++)
             {
-                double[] p = new double[partition.Count];
-                int i = 0;
-                foreach (HashSet<T> block in partition)
+                double[] p = new double[blocks.Count];
+                int j = 0;
+                foreach (KeyValuePair<int,HashSet<T>> kvp in blocks)
                 {
-                    p[i] = computePosteriorLikelihood(block, entity);
-                    i++;
+                    p[j] = computePosteriorLikelihood(kvp.Value, entities[i]);
+                    j++;
                 }
                 double sum = p.Sum();
-                for (i =0; i < p.Length; i++)
+                for (int k = 0; k < p.Length; k++)
                 {
-                    p[i] /= sum;
+                    p[k] /= sum;
                 }
-                probBlock = new GeneralDiscreteDistribution<HashSet<T>>(partition.ToArray(), p);
-                HashSet<T> chosenblock = probBlock.Next();
-                AddEntity(entity, chosenblock);
+                probBlock = new GeneralDiscreteDistribution<int>(blocks.Keys.ToArray(), p);
+                int chosenblockIndex = probBlock.Next();
+                AddEntity(i, chosenblockIndex);                
                 workingNumber++;
             }
+        }
+
+        public string Run(int nSteps)
+        {
+            StringBuilder history = new StringBuilder();
+            for (int i = 0; i < nSteps; i++)
+            {
+                Dictionary<int, int> occupationNumbers = new Dictionary<int, int>();
+                foreach (KeyValuePair<int,HashSet<T>> block in blocks) { occupationNumbers.Add(block.Key, block.Value.Count); }
+                int entityIndex = probObject.Next();
+                RemoveEntity(entityIndex);
+                workingNumber = entities.Length - 1;
+                double[] p = new double[blocks.Count];
+                int j = 0;
+                foreach (KeyValuePair<int, HashSet<T>> kvp in blocks)
+                {
+                    p[j] = computePosteriorLikelihood(kvp.Value, entities[entityIndex]);
+                    j++;
+                }
+                double sum = p.Sum();
+                for (int k = 0; k < p.Length; k++)
+                {
+                    p[k] /= sum;
+                }
+                probBlock = new GeneralDiscreteDistribution<int>(blocks.Keys.ToArray(), p);
+                int chosenblockIndex = probBlock .Next();
+                AddEntity(entityIndex, chosenblockIndex);
+                if (i % samplingInterval == 0)
+                {
+                    history.AppendLine(i + "\t" + (blocks.Count - 1) + "\t" + sumLogLik);
+                }
+            }
+            return history.ToString();
         }
 
         private double computePosteriorLikelihood(HashSet<T> block, T entity)
@@ -86,66 +134,83 @@ namespace DirichletProcessMCMC
             {
                 p = block.Count / (alpha + workingNumber);
             }
-            return p * Likelihood(entity, block);
+            return p * Math.Exp(LogLikelihood(entity, block));
         }
 
-        private bool RemoveEntity(T entity)
+        private bool RemoveEntity(int iEntity)
         {
-            if (!assignments.ContainsKey(entity))
+            if (!assignments.ContainsKey(iEntity))
             {
                 return false;
             }
 
-            assignments[entity].Remove(entity);
-            if (assignments[entity].Count == 0)
+            int iSource = assignments[iEntity];
+            // keep track of the sum log likelihood
+            sumLogLik -= logLikelihoods[iSource];
+
+            blocks[iSource].Remove(entities[iEntity]);
+
+            // if the source block is now empty, remove it
+            // and recycle its index
+            if (blocks[iSource].Count == 0)
             {
-                partition.Remove(assignments[entity]);
+                // recycle block keys
+                BlockIndices.Add(iSource);
+                blocks.Remove(iSource);
+                logLikelihoods.Remove(iSource);
             }
             else
             {
-                assignments[entity] = null;
+                // entity is formally unassigned
+                assignments[iEntity] = -1;
+                // compute the updated log likelihood
+                logLikelihoods[iSource] = logLikDel(blocks[iSource]);
+                // update the sum
+                sumLogLik += logLikelihoods[iSource];
+            }
+
+            return true;
+        }
+
+        private bool AddEntity(int entityIndex, int blockIndex)
+        {
+            if (!blocks.ContainsKey(blockIndex))
+            {
+                throw new KeyNotFoundException();
+            }
+
+            // if adding to the null block, it is necessary to add a new empty block
+            if (blocks[blockIndex].Count == 0)
+            {
+                // use the next available black index
+                blocks.Add(BlockIndices[0],new HashSet<T>());
+                logLikelihoods.Add(BlockIndices[0], 0);                
+                BlockIndices.Remove(BlockIndices[0]);
+            }
+
+            // keep track of the sum logLikelihood
+            sumLogLik -= logLikelihoods[blockIndex];
+            blocks[blockIndex].Add(entities[entityIndex]);
+            logLikelihoods[blockIndex] = logLikDel(blocks[blockIndex]);
+            sumLogLik += logLikelihoods[blockIndex];
+            
+            // update the assignments
+            if (!assignments.ContainsKey(entityIndex))
+            {
+                assignments.Add(entityIndex, blockIndex);
+            }
+            else
+            {
+                assignments[entityIndex] = blockIndex;
             }
             return true;
         }
 
-        private bool AddEntity(T entity, HashSet<T> block)
+        private double LogLikelihood(T entity, HashSet<T> block)
         {
-            if (block.Count == 0)
-            {
-                partition.Add(new HashSet<T>());
-            }
-
-            block.Add(entity);
-            if (!assignments.ContainsKey(entity))
-            {
-                assignments.Add(entity, block);
-            }
-            else
-            {
-                assignments[entity] = block;
-                partition.Add(block);
-            }
-            return true;
-        }
-
-        //private void ComputePriorProbability(HashSet<T> block)
-        //{
-        //    if (!priorProbability.ContainsKey(block))
-        //    {
-        //        priorProbability.Add(block, double.NaN);
-        //    }
-        //    priorProbability[block] = block.Count / (alpha + totalNumber);
-        //}
-
-        private double Likelihood(HashSet<T> block)
-        {
-            // this will be replaced by a delegate
-            return 1;
-        }
-
-        private double Likelihood(T entity, HashSet<T> block)
-        {
-            return 1;
+            HashSet<T> temp = new HashSet<T>(block);
+            temp.Add(entity);
+            return logLikDel(temp);
         }
     }
 }
