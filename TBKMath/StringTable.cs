@@ -95,7 +95,8 @@ namespace TBKMath
                 // check to see if it is blank
                 if (!IsTrailingBlankRow(buffer))
                 {
-                    for (int j = 0; j < buffer.Length; j++)
+                    int l = Math.Min(buffer.Length, nCols);
+                    for (int j = 0; j < l; j++)
                     {
                         table.data[i, j] = buffer[j];
                     }
