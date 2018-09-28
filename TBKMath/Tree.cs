@@ -772,6 +772,8 @@ namespace TBKMath
                 return;
 
             if (tree.Parent != null)
+
+
                 ReverseAncestry(tree.Parent, tree);
 
             if (child != null)
