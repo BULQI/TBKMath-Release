@@ -263,6 +263,27 @@ namespace TBKMath
             return cumulated;
         }
 
+        /// <summary>
+        /// Makes a deep copy of a dictionary. Code from 
+        /// https://stackoverflow.com/questions/28383150/make-a-deep-copy-of-a-dictionary
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
+        public static Dictionary<TKey, TValue> CloneDictionaryCloningValues<TKey, TValue>(
+         Dictionary<TKey, TValue> original) where TValue : ICloneable
+        {
+            Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(
+                 original.Count, original.Comparer);
+
+            foreach (KeyValuePair<TKey, TValue> entry in original)
+            {
+                ret.Add(entry.Key, (TValue)entry.Value.Clone());
+            }
+            return ret;
+        }
+
     }
 
     public static class Averager
