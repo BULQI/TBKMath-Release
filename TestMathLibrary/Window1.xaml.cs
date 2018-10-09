@@ -300,7 +300,7 @@ namespace TestMathLibrary
             MessageBox.Text += "Done.\n";
         }
 
-        private void condense_Click(object sender, RoutedEventArgs e)
+        private void Condense_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.Title = "Open Newick file with tree.";
@@ -330,6 +330,25 @@ namespace TestMathLibrary
                 concateNamesAndContents(child);
             }
             tree.Name += "|" + tree.Contents.ToString();
+        }
+
+        private void GetTreeAges_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Title = "Open Newick file with tree.";
+            ofd.Filter = "Newick file|*.nwk|all files|*.*";
+            if (!(bool)ofd.ShowDialog())
+                return;
+
+            string treeString = System.IO.File.ReadAllText(ofd.FileName);
+
+            Dictionary<string, double> ages = new Dictionary<string, double>();
+            Tree<string> tree = new Tree<string>(treeString);
+            int next = 0;
+            Tree<string>.NameIntermediates(tree, ref next);
+            List<string> nodeNames = tree.getInternalNodeNames();
+            
+
         }
 
     }

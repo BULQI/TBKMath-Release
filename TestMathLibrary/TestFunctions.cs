@@ -29,7 +29,6 @@ namespace TestMathLibrary
         {
             return Tree<string>.CondenseAndCount(tree, theta);
         }
-
     }
 
     public class TestStatistics

@@ -107,6 +107,16 @@ namespace TBKMath
             return age;
         }
 
+        public static void GetAges(Tree<T> tree, Dictionary<string, double> ages)
+        {
+            double parentAge = ages.ContainsKey(tree.Parent.Name) ? ages[tree.Parent.Name] : 0;
+            ages.Add(tree.Name, parentAge + tree.BranchLength);
+            foreach (Tree<T> child in tree.Children)
+            {
+                GetAges(child, ages);
+            }
+        }
+
         /// <summary>
         /// The Newick string describing this tree.
         /// </summary>
@@ -429,7 +439,6 @@ namespace TBKMath
             }
             return double.MinValue;
         }
-
 
         public void AddChild(Tree<T> child)
         {
