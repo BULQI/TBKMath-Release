@@ -5,6 +5,7 @@
     <Grid>
         <Button Height="23" HorizontalAlignment="Right" Name="dismissButton" VerticalAlignment="Bottom" Width="75" Click="dismissButton_Click">dismiss</Button>
         <Button Name="testAmoebaButton" Height="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="75" Click="testAmoebaButton_Click" Margin="0,0,0.333,112.333">amoeba</Button>
+        <Button Content="tree ages" Height="23" HorizontalAlignment="Right" Margin="0,0,0.333,84.333" VerticalAlignment="Bottom" Width="75" Click="GetTreeAges_Click"/>
         <TextBox Height="88" Name="MessageBox" VerticalAlignment="Top" />
         <Button Height="23" HorizontalAlignment="Right" Margin="0,0,0.333,141.333" Name="bisectButton" VerticalAlignment="Bottom" Width="75" Click="bisectButton_Click">bisect</Button>
         <Button Content="MCMC" Height="23" HorizontalAlignment="Left" Margin="12,180,0,0" Name="mcmcButton" VerticalAlignment="Top" Width="75" Click="mcmcButton_Click" />
@@ -18,6 +19,5 @@
         <Button Content="reroot" HorizontalAlignment="Left" Margin="221,93,0,0" VerticalAlignment="Top" Width="75" Click="reroot_Click"/>
         <TextBox Name="rootNameBox" Height="25" Margin="221,120,0,127"/>
         <Button Content="condense" HorizontalAlignment="Left" Margin="221,150,0,0" VerticalAlignment="Top" Width="75" Click="Condense_Click"/>
-        <Button Content="tree ages" HorizontalAlignment="Left" Margin="221,264,-0.667,0" VerticalAlignment="Top" Width="75" Click="GetTreeAges_Click"/>
     </Grid>
 </Window>

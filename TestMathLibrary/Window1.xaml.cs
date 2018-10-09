@@ -346,8 +346,25 @@ namespace TestMathLibrary
             Tree<string> tree = new Tree<string>(treeString);
             int next = 0;
             Tree<string>.NameIntermediates(tree, ref next);
-            List<string> nodeNames = tree.getInternalNodeNames();
-            
+            Tree<string>.GetAges(tree, ages);
+            Dictionary<string, double> lengths = new Dictionary<string, double>();
+            Tree<string>.GetBranchLengths(tree, lengths);
+            Dictionary<string, string> parents = new Dictionary<string, string>();
+            Tree<string>.GetParents(tree, parents);
+
+            string outpath = System.IO.Directory.GetParent(ofd.FileName).ToString();
+
+            using (System.IO.StreamWriter writer = System.IO.File.CreateText(System.IO.Path.Combine(outpath, "NodeAges.txt")))
+            {
+                writer.WriteLine("Node\tLength\tParentAge");
+                foreach (string node in ages.Keys)
+                {
+                    if (parents.ContainsKey(node))
+                    {
+                        writer.WriteLine(node + "\t" + lengths[node] + "\t" + ages[parents[node]]);
+                    }
+                }
+            }
 
         }
 

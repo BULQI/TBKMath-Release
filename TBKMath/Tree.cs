@@ -107,13 +107,60 @@ namespace TBKMath
             return age;
         }
 
+        /// <summary>
+        /// Gets the ages of all descendants in a Tree.
+        /// </summary>
+        /// <param name="tree">The tree to examine.</param>
+        /// <param name="ages">The Dictionary that stores the ages by node name.</param>
         public static void GetAges(Tree<T> tree, Dictionary<string, double> ages)
         {
-            double parentAge = ages.ContainsKey(tree.Parent.Name) ? ages[tree.Parent.Name] : 0;
-            ages.Add(tree.Name, parentAge + tree.BranchLength);
+            if (tree.Parent == null)
+            {
+                ages.Add(tree.Name, 0);
+            }
+            else
+            {
+                ages.Add(tree.Name, ages[tree.Parent.Name] + tree.BranchLength);
+            }
+
             foreach (Tree<T> child in tree.Children)
             {
                 GetAges(child, ages);
+            }
+        }
+
+        /// <summary>
+        /// Gets the lengths of all branches in a Tree.
+        /// </summary>
+        /// <param name="tree">The tree to examine.</param>
+        /// <param name="lengths">The Dictionary that stores the ages by node name.</param>
+        public static void GetBranchLengths(Tree<T> tree, Dictionary<string, double> lengths)
+        {
+
+            if (tree.Parent != null)
+            {
+                lengths.Add(tree.Name, tree.BranchLength);
+            }
+            else
+            {
+                lengths.Add(tree.Name, double.NaN);
+            }
+
+            foreach (Tree<T> child in tree.Children)
+            {
+                GetBranchLengths(child, lengths);
+            }
+        }
+
+        public static void GetParents(Tree<T> tree, Dictionary<string, string> parents)
+        {
+            if (tree.Parent != null)
+            {
+                parents.Add(tree.Name, tree.Parent.Name);
+            }
+            foreach (Tree<T> child in tree.Children)
+            {
+                GetParents(child, parents);
             }
         }
 
@@ -302,7 +349,7 @@ namespace TBKMath
             return trlist.Where(y => y.Children.Count == 0).Select(x => x.Name).ToList();
         }
 
-        public List<string> getInternalNodeNames()
+        public List<string> GetInternalNodeNames()
         {
             var trlist = findSubTree();
             return trlist.Where(y => y.Children.Count > 0).Select(x => x.Name).ToList();
