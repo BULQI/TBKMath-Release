@@ -959,5 +959,28 @@ namespace TBKMath
             }
         }
 
+        public static string MakePalmTreeString(List<T> items, double branchLength)
+        {
+            string newick = "(";
+            if (items.Count > 1)
+                newick += "(";
+
+            foreach (T item in items)
+            {
+                newick += item.ToString() + ":" + branchLength.ToString() + ",";
+            }
+
+            // remove last comma
+            newick = newick.Substring(0, newick.Length - 1);
+
+            if (items.Count > 1)
+                newick += ")" + ":" + branchLength.ToString();
+
+            newick += ")Reference;";
+
+            return newick;
+        }
+
+
     }
 }
