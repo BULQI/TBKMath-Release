@@ -111,24 +111,6 @@ namespace TBKMath
             return true;
         }
 
-        public static void FillArray(ref double[] array, double value)
-        {
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = value;
-            }
-        }
-
-        public static void FillArrayCumulatively(ref double[] array, double value)
-        {
-            if (array.Length > -1)
-                array[0] = value;
-            for (int i = 1; i < array.Length; i++)
-            {
-                array[i] = array[i - 1] + value;
-            }
-        }
-
         /// <summary>
         /// Computes the Hamming distance between two strings.
         /// </summary>
@@ -226,6 +208,24 @@ namespace TBKMath
             {
                 // if y > 1, the next term will be positive, so keep going
                 return y + LogStar(y);
+            }
+        }
+
+        public static void FillHomogeneously<T>(this T[] array, T value)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = value;
+            }
+        }
+
+        public static void FillCumulatively(this double[] array, double value)
+        {
+            if (array.Length > -1)
+                array[0] = value;
+            for (int i = 1; i < array.Length; i++)
+            {
+                array[i] = array[i - 1] + value;
             }
         }
 
