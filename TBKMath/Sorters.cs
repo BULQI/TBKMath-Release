@@ -34,6 +34,7 @@ namespace TBKMath
 
         public bool Process(T item, double score)
         {
+            // just a check...
             if (score < WorstScore && Scores.Count >= NKeep)
             {
                 return false;
