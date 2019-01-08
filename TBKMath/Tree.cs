@@ -205,7 +205,6 @@ namespace TBKMath
                     Children.Add(new Tree<T>(n, this));
                 }
             }
-
         }
 
         /// <summary>
@@ -268,7 +267,6 @@ namespace TBKMath
             }
             throw new Exception("target node not found exception");
         }
-
 
         /// <summary>
         /// get path from root to the node with given name
@@ -415,7 +413,7 @@ namespace TBKMath
             {
                 for (int j = 0; j < branches.Count; j++)
                 {
-                    var d = findDistance(leaves[i], branches[j]);
+                    var d = GetDistance(leaves[i], branches[j]);
                     distMatrix[i][j] = d;
                 }
             }
@@ -454,12 +452,12 @@ namespace TBKMath
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        double findDistance(Tree<T> x, Tree<T> y)
+        public double GetDistance(Tree<T> x, Tree<T> y)
         {
             var lca = findLCA(x, y);
             //var d1 = lca.findDistance(x, 0);
             //var d2 = lca.findDistance(y, 0);
-            return lca.findDistance(x, 0) + lca.findDistance(y, 0);
+            return lca.getDistance(x, 0) + lca.getDistance(y, 0);
         }
 
         /// <summary>
@@ -470,7 +468,7 @@ namespace TBKMath
         /// <param name="x"></param>
         /// <param name="d"></param>
         /// <returns></returns>
-        double findDistance(Tree<T> x, double d)
+        private double getDistance(Tree<T> x, double d)
         {
             if (x == this)
             {
@@ -478,7 +476,7 @@ namespace TBKMath
             }
             foreach (var child in Children)
             {
-                var td = child.findDistance(x, d + child.branchLength);
+                var td = child.getDistance(x, d + child.branchLength);
                 if (td != double.MinValue)
                 {
                     return td;
