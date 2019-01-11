@@ -130,7 +130,7 @@ namespace TBKMath
         }
 
         /// <summary>
-        /// Gets the lengths of all branches in a Tree.
+        /// Gets the length of each branch in a Tree.
         /// </summary>
         /// <param name="tree">The tree to examine.</param>
         /// <param name="lengths">The Dictionary that stores the ages by node name.</param>
@@ -152,6 +152,11 @@ namespace TBKMath
             }
         }
 
+        /// <summary>
+        /// Gets the parent for each node in a tree. Works recursively.
+        /// </summary>
+        /// <param name="tree">The tree of interest.</param>
+        /// <param name="parents"></param>
         public static void GetParents(Tree<T> tree, Dictionary<string, string> parents)
         {
             if (tree.Parent != null)
@@ -167,25 +172,30 @@ namespace TBKMath
         /// <summary>
         /// The Newick string describing this tree.
         /// </summary>
-        public string Descriptor;
+        public string Descriptor { get; protected set; }
 
         /// <summary>
         /// The object associated with the root node of this tree.
         /// </summary>
-        public T Contents;
+        public T Contents { get; set; }
 
-        public Tree(string newick, Tree<T> parent = null)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="descriptor">A tree descriptor in simple Newick (not NEXUS) format.</param>
+        /// <param name="parent">The intended parent of the newly-created tree. Default is null.</param>
+        public Tree(string descriptor, Tree<T> parent = null)
         {
             Children = new List<Tree<T>>();
-            Descriptor = newick;
+            Descriptor = descriptor;
 
-            if (newick == "")
+            if (descriptor == "")
                 return;
 
             // remove unnecessary semicolon if it is present
-            if (newick.Last() == ';')
+            if (descriptor.Last() == ';')
             {
-                newick = newick.Substring(0, newick.Length - 1);
+                descriptor = descriptor.Substring(0, descriptor.Length - 1);
             }
 
             if (parent != null)
@@ -193,13 +203,13 @@ namespace TBKMath
                 Parent = parent;
             }
 
-            NodeInfo ni = ParseNewick(newick);
+            NodeInfo ni = ParseDescriptor(descriptor);
             Name = ni.Name;
             BranchLength = ni.BranchLength;
 
             if (ni.ChildrenNewick != "NULL")
             {
-                List<string> childNewicks = ExtractChildNewicks(ni.ChildrenNewick);
+                List<string> childNewicks = ExtractChildDescriptors(ni.ChildrenNewick);
                 foreach (string n in childNewicks)
                 {
                     Children.Add(new Tree<T>(n, this));
@@ -208,19 +218,19 @@ namespace TBKMath
         }
 
         /// <summary>
-        /// copy constructor
+        /// Constructor that copies another tree.
         /// </summary>
-        /// <param name="src"></param>
-        public Tree(Tree<T> src)
+        /// <param name="sourceTree">The tree to copy.</param>
+        public Tree(Tree<T> sourceTree)
         {
-            Name = src.Name;
-            branchLength = src.branchLength;
-            Descriptor = src.Descriptor;
-            Contents = src.Contents;
-            if (src.Children != null)
+            Name = sourceTree.Name;
+            branchLength = sourceTree.branchLength;
+            Descriptor = sourceTree.Descriptor;
+            Contents = sourceTree.Contents;
+            if (sourceTree.Children != null)
             {
-                this.Children = new List<Tree<T>>(src.Children.Count);
-                foreach (var child in src.Children)
+                this.Children = new List<Tree<T>>(sourceTree.Children.Count);
+                foreach (var child in sourceTree.Children)
                 {
                     var kid = new Tree<T>(child);
                     kid.Parent = this;
@@ -229,20 +239,27 @@ namespace TBKMath
             }
         }
 
-        public static Tree<T> ChangeContentType<U>(Tree<U> src, TConverter<T, U> converter)
+        /// <summary>
+        /// Allows the content type of the tree to be changed.
+        /// </summary>
+        /// <typeparam name="U">The original content type.</typeparam>
+        /// <param name="originalTree"></param>
+        /// <param name="converter">A converter that performs the actual type conversion from U to T.</param>
+        /// <returns>A tree with content type T with the same structure as the original tree.</returns>
+        public static Tree<T> ChangeContentType<U>(Tree<U> originalTree, TConverter<T, U> converter)
         {
             Tree<T> t = new Tree<T>("");
-            t.Name = src.Name;
-            t.branchLength = src.branchLength;
-            t.Descriptor = src.Descriptor;
-            if (src.Contents != null)
+            t.Name = originalTree.Name;
+            t.branchLength = originalTree.branchLength;
+            t.Descriptor = originalTree.Descriptor;
+            if (originalTree.Contents != null)
             {
-                t.Contents = converter.Convert(src.Contents);
+                t.Contents = converter.Convert(originalTree.Contents);
             }
-            if (src.Children != null)
+            if (originalTree.Children != null)
             {
-                t.Children = new List<Tree<T>>(src.Children.Count);
-                foreach (Tree<U> child in src.Children)
+                t.Children = new List<Tree<T>>(originalTree.Children.Count);
+                foreach (Tree<U> child in originalTree.Children)
                 {
                     Tree<T> kid = ChangeContentType(child, converter);
                     kid.Parent = t;
@@ -253,19 +270,43 @@ namespace TBKMath
         }
         
         /// <summary>
-        /// get distance from root to the node with given name
+        /// Gets the distance from the root (this tree) to a node.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">The name of the relevant node.</param>
+        /// <returns>The total distance from the root of this tree to the named node. Exceptions: If the named node is not
+        /// found on the tree, throws a generic exception.</returns>
         public double GetDistanceToNode(string name)
         {
             if (this.Name == name) return 0;
-            foreach (var child in Children)
+            foreach (Tree<T> child in Children)
             {
-                var d = child.GetDistanceHelper(name);
+                double d = child.GetDistanceHelper(name);
                 if (d != double.MinValue) return d;
             }
-            throw new Exception("target node not found exception");
+            throw new Exception("Named node not found.");
+        }
+
+
+        /// <summary>
+        /// Recursively 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private double GetDistanceHelper(string name)
+        {
+            if (this.Name == name)
+            {
+                return this.branchLength;
+            }
+            foreach (var child in this.Children)
+            {
+                var d = child.GetDistanceHelper(name);
+                if (d != double.MinValue)
+                {
+                    return d + this.branchLength;
+                }
+            }
+            return double.MinValue;
         }
 
         /// <summary>
@@ -303,29 +344,6 @@ namespace TBKMath
                 }
             }
             return null;
-        }
-
-
-        /// <summary>
-        /// recursively find node to compute distance
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        private double GetDistanceHelper(string name)
-        {
-            if (this.Name == name)
-            {
-                return this.branchLength;
-            }
-            foreach (var child in this.Children)
-            {
-                var d = child.GetDistanceHelper(name);
-                if (d != double.MinValue)
-                {
-                    return d + this.branchLength;
-                }
-            }
-            return double.MinValue;
         }
 
         /// <summary>
@@ -485,17 +503,33 @@ namespace TBKMath
             return double.MinValue;
         }
 
+        /// <summary>
+        /// Adds a tree as a child to this tree. Makes child a new child of this tree, and makes this tree the parent of child.
+        /// </summary>
+        /// <param name="child">A tree to be added as a new child.</param>
         public void AddChild(Tree<T> child)
         {
             Children.Add(child);
             child.Parent = this;
         }
 
+        /// <summary>
+        /// Removes a child tree as a child of this tree. Sets parent of the child to null.
+        /// </summary>
+        /// <param name="child">The child tree to be removed.</param>
         public void RemoveChild(Tree<T> child)
         {
+            child.Parent = null;
             Children.Remove(child);
         }
 
+        /// <summary>
+        /// Finds the right parenthesis in a text string that matches, according to the usual parenthesis-matching rules, 
+        /// the left parenthesis at the specified position.
+        /// </summary>
+        /// <param name="text">A text string to be searched.</param>
+        /// <param name="startPosition">The position of the left parenthesis in the string.</param>
+        /// <returns>The position of the matching right parenthesis.</returns>
         private static int findMatchingRightParenthesis(string text, int startPosition)
         {
             if (text[startPosition] != '(')
@@ -541,7 +575,7 @@ namespace TBKMath
             return ni;
         }
 
-        private static List<string> ExtractChildNewicks(string newick)
+        private static List<string> ExtractChildDescriptors(string newick)
         {
             List<string> childNewicks = new List<string>();
 
@@ -571,7 +605,7 @@ namespace TBKMath
             return childNewicks;
         }
 
-        private static NodeInfo ParseNewick(string newick)
+        private static NodeInfo ParseDescriptor(string newick)
         {
             string nameandlength;
             int lPos = -1;
@@ -629,11 +663,11 @@ namespace TBKMath
         }
 
         /// <summary>
-        /// Computes the Newick descriptor for the string. This descriptor is computed by traversing the tree, 
+        /// Computes the Newick descriptor for a specified tree. This descriptor is computed by traversing the tree, 
         /// and does not refer to the tree's Descriptor itself.
         /// </summary>
         /// <param name="tree">The tree to serialize.</param>
-        /// <returns>A Newick string containing the tree's description.</returns>
+        /// <returns>A string with the tree descriptor in Newick format.</returns>
         public static string GetDescriptor(Tree<T> tree)
         {
             string desc = string.Empty;
@@ -656,6 +690,11 @@ namespace TBKMath
             return desc;
         }
 
+        /// <summary>
+        /// Computes the Newick descriptor for this tree. This descriptor is computed by traversing the tree, 
+        /// and does not refer to the tree's Descriptor itself.
+        /// </summary>
+        /// <returns>A string with the tree descriptor in Newick format.</returns>
         public string GetDescriptor()
         {
             return GetDescriptor(this);
@@ -712,13 +751,15 @@ namespace TBKMath
         }
 
         /// <summary>
-        /// Attaches this tree to another tree as its parent.
+        /// Attaches this tree to another tree as its parent. The parent tree's children list is updated to include this tree.
         /// </summary>
+        /// <param name="distance">The branch length to be set between this tree and its parent.</param>
         /// <param name="p">The tree to be treated as the parent to this tree.</param>
         public void SetParent(Tree<T> p, double distance = 0)
         {
             Parent = p;
             branchLength = distance;
+            p.Children.Add(this);
         }
 
         /// <summary>
@@ -827,8 +868,7 @@ namespace TBKMath
 
             if (tree.Parent != null)
 
-
-                ReverseAncestry(tree.Parent, tree);
+            ReverseAncestry(tree.Parent, tree);
 
             if (child != null)
             {
@@ -926,59 +966,45 @@ namespace TBKMath
             return newTree;
         }
          
-        public static void NameIntermediates(Tree<T> tree, ref int next)
+        public static void NumberIntermediates(Tree<T> tree, ref int next, string prefix)
         {
             if (tree.Name == null || tree.Name.Length == 0)
             {
-                tree.Name = "I" + next.ToString();
+                tree.Name += prefix + next.ToString();
                 next++;
             }
             foreach (Tree<T> child in tree.Children)
             {
-                NameIntermediates(child, ref next);
+                NumberIntermediates(child, ref next, prefix);
             }
         }
 
-        public static void NameIntermediates2(Tree<T> tree, ref int next)
+        /// <summary>
+        /// Creates a palm tree from a list of items. 
+        /// </summary>
+        /// <param name="items">Any items of type T that have a useful ToString() method.</param>
+        /// <param name="branchLength">The lengths of each of the palm tree branches, including from the root to the intermediate.</param>
+        /// <returns>A tree with content type T.</returns>
+        public static Tree<T> MakePalmTree(List<T> items, double branchLength)
         {
-            if (tree.Name == null || tree.Name.Length == 0)
-            {
-                tree.Name = "I" + next.ToString();
-                next++;
-            }
-            else
-            {
-                tree.Name = tree.Name + ".I" + next.ToString();
-                next++;
-            }
-            foreach (Tree<T> child in tree.Children)
-            {
-                NameIntermediates2(child, ref next);
-            }
-        }
-
-        public static string MakePalmTreeString(List<T> items, double branchLength)
-        {
-            string newick = "(";
+            string descriptor = "(";
             if (items.Count > 1)
-                newick += "(";
+                descriptor += "(";
 
             foreach (T item in items)
             {
-                newick += item.ToString() + ":" + branchLength.ToString() + ",";
+                descriptor += item.ToString() + ":" + branchLength.ToString() + ",";
             }
 
             // remove last comma
-            newick = newick.Substring(0, newick.Length - 1);
+            descriptor = descriptor.Substring(0, descriptor.Length - 1);
 
             if (items.Count > 1)
-                newick += ")" + ":" + branchLength.ToString();
+                descriptor += ")" + ":" + branchLength.ToString();
 
-            newick += ")Reference;";
+            descriptor += ")Reference;";
 
-            return newick;
+            return new Tree<T>(descriptor);
         }
-
-
     }
 }

@@ -16,7 +16,7 @@ namespace TBKMath
         /// </summary>
         /// <param name="FileName">A legitimate filename to which the matrix will be written.</param>
         /// <param name="matrix">The two-dimensional matrix to be written.</param>
-        public static void WriteMatrixToDisk(string FileName, double[,] matrix)
+        public static void WriteMatrixToDisk<T>(string FileName, T[,] matrix)
         {
             using (StreamWriter writer = File.CreateText(FileName))
             {
@@ -31,7 +31,7 @@ namespace TBKMath
                     writer.Write(iRow);
                     for (int iCol = 0; iCol < matrix.GetLength(1); iCol++)
                     {
-                        writer.Write("\t" + matrix[iRow, iCol]);
+                        writer.Write("\t" + matrix[iRow, iCol].ToString());
                     }
                     writer.WriteLine();
                 }
@@ -43,7 +43,7 @@ namespace TBKMath
         /// </summary>
         /// <param name="FileName">A legitimate filename to which the matrix will be written.</param>
         /// <param name="matrix">The three-dimensional matrix to be written.</param>
-        public static void WriteMatrixToDisk(string FileName, double[, ,] matrix)
+        public static void WriteMatrixToDisk<T>(string FileName, T[, ,] matrix)
         {
             using (StreamWriter writer = File.CreateText(FileName))
             {
@@ -60,37 +60,7 @@ namespace TBKMath
                         writer.Write(iRow);
                         for (int iCol = 0; iCol < matrix.GetLength(1); iCol++)
                         {
-                            writer.Write("\t" + matrix[iRow, iCol, iLayer]);
-                        }
-                        writer.WriteLine();
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Writes a three-dimensional matrix to storage in a natural human-readable format.
-        /// </summary>
-        /// <param name="FileName">A legitimate filename to which the matrix will be written.</param>
-        /// <param name="matrix">The three-dimensional matrix to be written.</param> 
-        public static void WriteMatrixToDisk(string FileName, int[, ,] matrix)
-        {
-            using (StreamWriter writer = File.CreateText(FileName))
-            {
-                for (int iLayer = 0; iLayer < matrix.GetLength(2); iLayer++)
-                {
-                    for (int iCol = 0; iCol < matrix.GetLength(1); iCol++)
-                    {
-                        writer.Write("\t" + iCol);
-                    }
-                    writer.WriteLine();
-
-                    for (int iRow = 0; iRow < matrix.GetLength(0); iRow++)
-                    {
-                        writer.Write(iRow);
-                        for (int iCol = 0; iCol < matrix.GetLength(1); iCol++)
-                        {
-                            writer.Write("\t" + matrix[iRow, iCol, iLayer]);
+                            writer.Write("\t" + matrix[iRow, iCol, iLayer].ToString());
                         }
                         writer.WriteLine();
                     }
@@ -135,12 +105,6 @@ namespace TBKMath
                 if (s1[i] != s2[i]) dist++;
             }
             return dist;
-        }
-
-        public static string BuildNumber()
-        {
-            string returnVal = string.Empty;
-            return returnVal;
         }
 
         /// <summary>

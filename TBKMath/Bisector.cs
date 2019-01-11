@@ -84,7 +84,7 @@ namespace TBKMath
             }
             if (left >= right)
             {
-                throw new ArgumentException("left is not less than right, as required.");
+                throw new ArgumentException("Left is not less than right, as required.");
             }
 
             double fl = func(left);
@@ -117,8 +117,5 @@ namespace TBKMath
             }
             return (right + left) / 2;
         }
-
-
     }
-
 }

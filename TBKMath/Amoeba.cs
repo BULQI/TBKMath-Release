@@ -5,17 +5,28 @@ using System.Text;
 
 namespace TBKMath
 {
+
+    /// <summary>
+    /// Performs Amoeba minimization
+    /// </summary>
     public class Amoeba : EstimationProcess
     {
-        // translated into c# from the numerical recipes c++ code by TBK
-        // modified and documented by TBK
-        //
-        //      Point must be set before proceeding with the minimization
-        //
-        //      convergence criterion is
-        // 
-        //      errorEst = | f_Min - f_Max | /  ( | f_Min | + | f_Max | ) / 2
-        //      errorEst < ftol
+        /*    Translated into c# from
+              W.H.Press, B.P.Flannery, S.A. Teukolsky, W.T. Vetterling
+              Numerical Recipes: the art of scientific computing
+              1986 Cambridge University Press
+
+              Modified and documented by TBK
+        
+            Notes:
+              Point must be set before proceeding with the minimization 
+              Convergence criterion is
+         
+              errorEst < ftol
+
+              where errorEst = | f_Min - f_Max | /  ( | f_Min | + | f_Max | ) / 2
+
+        */
 
         public double ToleranceAchieved;
         public double ToleranceRequested;
@@ -23,15 +34,10 @@ namespace TBKMath
 
         private int nVertices; // equals ndim + 1
         private int ndim;
-        private bool forceVertexCreation = false;
-
-        public bool ForceVertexCreation
-        {
-            get { return forceVertexCreation; }
-            set { forceVertexCreation = value; }
-        }
+        public bool ForceVertexCreation { get; set; }
 
         double fmin;
+
         public List<double> FunctionValues;
 
         public List<List<double>> Vertices;
@@ -55,7 +61,7 @@ namespace TBKMath
                 MakeEdges();
             }
             // HS: allow recreating the vertices every time to ensure we start finding a new solution
-            if (Vertices == null || forceVertexCreation == true) MakeVertices();
+            if (Vertices == null || ForceVertexCreation == true) MakeVertices();
             if (MaxNumIterations == 0) MaxNumIterations = 10000;
 
             if (verbose == true && HF == null)

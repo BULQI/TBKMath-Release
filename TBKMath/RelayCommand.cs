@@ -1,15 +1,11 @@
 ﻿/*
  * This class was written by Rachel Lim and posted to https://rachel53461.wordpress.com/2011/05/08/simplemvvmexample/
- */
+   This code is a verbatim instantiation.
+   */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-
 
 namespace TBKMath
 {
