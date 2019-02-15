@@ -193,6 +193,16 @@ namespace TBKMath
             }
         }
 
+        public static void FillCumulatively(this int[] array, int value)
+        {
+            if (array.Length > -1)
+                array[0] = value;
+            for (int i = 1; i < array.Length; i++)
+            {
+                array[i] = array[i - 1] + value;
+            }
+        }
+
         public static double[] Cumulate(this double[] vector)
         {
             if (vector == null)
