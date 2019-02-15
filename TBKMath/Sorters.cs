@@ -16,12 +16,12 @@ namespace TBKMath
         {
             NKeep = nKeep;
             Scores = new Dictionary<T, double>();
+            WorstScore = double.MinValue;
         }
 
         public string Serialized()
         {
             string output = string.Empty;
-            // sort 
 
             DictionarySorter<T>.SortDictionary(Scores);
 
@@ -59,10 +59,11 @@ namespace TBKMath
                         }
                     }
                     Scores.Remove(worstResult);
-
                 }
+                DictionarySorter<T>.SortDictionary(Scores);
                 return true;
             }
+
             // find new worst result
             //WorstScore = double.MaxValue;
             //foreach (KeyValuePair<T, double> kvp in Scores)
@@ -72,9 +73,7 @@ namespace TBKMath
             //        WorstScore = kvp.Value;
             //        worstResult = kvp.Key;
             //    }
-            //}
-
-            
+            //   
         }
     }
 
