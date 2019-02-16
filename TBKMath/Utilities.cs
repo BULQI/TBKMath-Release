@@ -183,26 +183,26 @@ namespace TBKMath
             }
         }
 
-        public static void FillCumulatively(this double[] array, double value)
+        public static void FillCumulatively(this double[] array, double increment = 1, double start = 0)
         {
             if (array.Length > -1)
-                array[0] = value;
+                array[0] = start;
             for (int i = 1; i < array.Length; i++)
             {
-                array[i] = array[i - 1] + value;
+                array[i] = array[i - 1] + increment;
             }
         }
 
-        public static void FillCumulatively(this int[] array, int value)
+        public static void FillCumulatively(this int[] array, int increment = 1, int start = 1)
         {
             if (array.Length > -1)
-                array[0] = value;
+                array[0] = start;
             for (int i = 1; i < array.Length; i++)
             {
-                array[i] = array[i - 1] + value;
+                array[i] = array[i - 1] + increment;
             }
         }
-
+         
         public static double[] Cumulate(this double[] vector)
         {
             if (vector == null)
@@ -258,6 +258,53 @@ namespace TBKMath
             return ret;
         }
 
+        public static double Mean(this double[] v)
+        {
+            double mean = 0;
+            foreach (double x in v)
+            {
+                mean += x;
+            }
+            return mean/v.Length;
+        }
+
+        public static double Variance(this double[] v)
+        {
+            double var = 0;
+            foreach (double x in v)
+            {
+                var += x * x;
+            }
+            double mean = v.Mean();
+            return (var - v.Length * mean * mean) / (v.Length - 1);
+        }
+
+        public static double Variance(this double[] v, double mean)
+        {
+            double var = 0;
+            foreach (double x in v)
+            {
+                var += x * x;
+            }
+            return (var - v.Length * mean * mean) / (v.Length - 1);
+        }
+
+        public static T[][] ToJagged<T>(this T[,] array)
+        {
+            int nRows = array.GetLength(0);
+            T[][] jagged = new T[nRows][];
+
+            int nCols = array.GetLength(1);
+            for (int iRow = 0; iRow < nRows; iRow++)
+            {
+                jagged[iRow] = new T[nCols];
+                for (int iCol = 0; iCol < nCols; iCol++)
+                {
+                    jagged[iRow][iCol] = array[iRow, iCol]; 
+                }
+            }
+            return jagged;
+        }
     }
 
     public static class Averager
@@ -300,4 +347,6 @@ namespace TBKMath
             return avg;
         }
     }
+
+
 }
