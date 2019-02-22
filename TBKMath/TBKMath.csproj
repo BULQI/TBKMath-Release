@@ -152,6 +152,7 @@
     <Compile Include="PMF.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PseudoRandom.cs" />
     <Compile Include="Quadrature.cs" />
     <Compile Include="RaggedTable.cs" />
     <Compile Include="RelayCommand.cs" />
