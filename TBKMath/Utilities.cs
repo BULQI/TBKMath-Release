@@ -43,7 +43,7 @@ namespace TBKMath
         /// </summary>
         /// <param name="FileName">A legitimate filename to which the matrix will be written.</param>
         /// <param name="matrix">The three-dimensional matrix to be written.</param>
-        public static void WriteMatrixToDisk<T>(string FileName, T[, ,] matrix)
+        public static void WriteMatrixToDisk<T>(string FileName, T[,,] matrix)
         {
             using (StreamWriter writer = File.CreateText(FileName))
             {
@@ -202,7 +202,7 @@ namespace TBKMath
                 array[i] = array[i - 1] + increment;
             }
         }
-         
+
         public static double[] Cumulate(this double[] vector)
         {
             if (vector == null)
@@ -265,7 +265,7 @@ namespace TBKMath
             {
                 mean += x;
             }
-            return mean/v.Length;
+            return mean / v.Length;
         }
 
         public static double Variance(this double[] v)
@@ -300,53 +300,69 @@ namespace TBKMath
                 jagged[iRow] = new T[nCols];
                 for (int iCol = 0; iCol < nCols; iCol++)
                 {
-                    jagged[iRow][iCol] = array[iRow, iCol]; 
+                    jagged[iRow][iCol] = array[iRow, iCol];
                 }
             }
             return jagged;
         }
-    }
 
-    public static class Averager
-    {
-        public static double[] Average(double[] v1, double[] v2, double w1, double w2)
+        public static int DesignSign(int i, int j, int k, int x = 1)
         {
-            double[] avg = new double[v1.Length];
-            try
+            if (k == 1)
             {
-                for (int i = 0; i < v1.Length; i++)
-                {
-                    avg[i] = w1 * v1[i] + w2 * v2[i];
-                }
+                return (i == 1 & j == 1) ? -x : x;
             }
-            catch (IndexOutOfRangeException e)
+
+            int n = (int)Math.Pow(2, k - 1);
+            if (i >= n & j >= n)
             {
-                throw new ArgumentException("Argument vectors are not the same length.", e);
+                x = -x;
             }
-            return avg;
+
+            i = (i >= n) ? i - n : i;
+            j = (j >= n) ? j - n : j;
+            return DesignSign(i, j, k - 1, x);
         }
 
-        public static double[][] Average(double[][] v1, double[][] v2, double w1, double w2)
+        public static class Averager
         {
-            double[][] avg = new double[v1.Length][];
-            if (v1.Length == 0)
+            public static double[] Average(double[] v1, double[] v2, double w1, double w2)
+            {
+                double[] avg = new double[v1.Length];
+                try
+                {
+                    for (int i = 0; i < v1.Length; i++)
+                    {
+                        avg[i] = w1 * v1[i] + w2 * v2[i];
+                    }
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    throw new ArgumentException("Argument vectors are not the same length.", e);
+                }
                 return avg;
+            }
 
-            try
+            public static double[][] Average(double[][] v1, double[][] v2, double w1, double w2)
             {
-                for (int i = 0; i < v1.Length; i++)
+                double[][] avg = new double[v1.Length][];
+                if (v1.Length == 0)
+                    return avg;
+
+                try
                 {
-                    avg[i] = Average(v1[i], v2[i], w1, w2);
+                    for (int i = 0; i < v1.Length; i++)
+                    {
+                        avg[i] = Average(v1[i], v2[i], w1, w2);
+                    }
                 }
-            }
-            catch (ArgumentException e)
-            {
-                throw new ArgumentException("Exeption in Averager.Average", e);
-            }
+                catch (ArgumentException e)
+                {
+                    throw new ArgumentException("Exeption in Averager.Average", e);
+                }
 
-            return avg;
+                return avg;
+            }
         }
     }
-
-
 }

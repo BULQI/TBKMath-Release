@@ -315,7 +315,7 @@ namespace TestMathLibrary
             double theta = double.Parse(rootNameBox.Text);
             Tree<int> newTree = TestFunctions.CondenseTree(tree, theta);
             int first = 1;
-            Tree<int>.NameIntermediates(newTree, ref first);
+            Tree<int>.NumberIntermediates(newTree, ref first, "I");
             concateNamesAndContents(newTree);
             treeString = newTree.GetDescriptor();
 
@@ -345,7 +345,7 @@ namespace TestMathLibrary
             Dictionary<string, double> ages = new Dictionary<string, double>();
             Tree<string> tree = new Tree<string>(treeString);
             int next = 0;
-            Tree<string>.NameIntermediates(tree, ref next);
+            Tree<string>.NumberIntermediates(tree, ref next, "I");
             Tree<string>.GetAges(tree, ages);
             Dictionary<string, double> lengths = new Dictionary<string, double>();
             Tree<string>.GetBranchLengths(tree, lengths);
